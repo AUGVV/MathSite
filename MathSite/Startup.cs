@@ -1,5 +1,6 @@
 using MathSite.Data;
 using MathSite.Hubs;
+using MathSite.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -28,6 +29,8 @@ namespace MathSite
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            AppDomain.CurrentDomain.SetData("DataDirectory", Environment.CurrentDirectory);
+            services.AddDbContext<TasksContext>(options => options.UseSqlServer(Configuration.GetConnectionString("TasksConnection")));
             services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             services.AddDatabaseDeveloperPageExceptionFilter();
 

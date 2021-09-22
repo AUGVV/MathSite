@@ -3,3 +3,34 @@
 *@
 @{
 }
+
+<p>
+    <b>Ваше имя:</b><br>
+    <b>@ViewData["CurrentUser"] </b><br>
+</p>
+<form method="post">
+    <p>
+        <b>Название вашей задачи:</b><br>
+        <input type="text" name="TaskName" id="task-name" size="40">
+    </p>
+    <p>
+        <b>Условие задачи:</b><Br>
+        <textarea name="TaskCondition" id="task-condition" cols="120" rows="7"></textarea>
+    </p>
+    <p>
+
+        <b>Ответ:</b><br>
+        Если ответ всего один введите значение только в одно поле<br>
+        <b>Ответ №1: </b><input name="FirstAnswer" type="text" id="first-answer" size="40"><br>
+        <b>Ответ №2: </b><input name="SecondAnswer" type="text" id="second-answer" size="40"><br>
+        <b>Ответ №3: </b><input name="ThirdAnswer" type="text" id="third-answer" size="40">
+    </p>
+    <p>
+        <b>Тэги:</b><br>
+        Вводите теги через пробел<br>
+        <input type="text" input name="TagName" id="tag-name" size="40">
+    </p>
+
+    <button id="create-task" asp-route-Act="create" type="submit" class="btn btn-primary">Создать</button>
+
+</form>

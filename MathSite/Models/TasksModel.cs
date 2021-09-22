@@ -17,7 +17,9 @@ namespace MathSite.Models
 
         public string Condition { get; set; }
 
-        public int IsDelete { get; set; }
+        public int IsDeleted { get; set; }
+
+        public DateTime AddDate { get; set; }
 
     }
 }
