@@ -29,16 +29,13 @@ namespace MathSite
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSignalR();
             AppDomain.CurrentDomain.SetData("DataDirectory", Environment.CurrentDirectory);
             services.AddDbContext<TasksContext>(options => options.UseSqlServer(Configuration.GetConnectionString("TasksConnection")));
             services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             services.AddDatabaseDeveloperPageExceptionFilter();
-
             services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<ApplicationDbContext>();
-            services.AddControllersWithViews();
-
-            services.AddSignalR();
-       
+            services.AddControllersWithViews();       
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -65,7 +62,7 @@ namespace MathSite
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapHub<ControlHub>("/Control");
+                endpoints.MapHub<ControlHub>("/hubs");
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");

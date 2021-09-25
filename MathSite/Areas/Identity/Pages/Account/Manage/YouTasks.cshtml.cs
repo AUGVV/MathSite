@@ -22,10 +22,7 @@ namespace MathSite.Areas.Identity.Pages.Account.Manage
             TasksDb = TasksContext;
             _signInManager = signInManager;
         }
-            
-
-
-        
+              
         public void OnGet()
         {
             ViewListCreate();
@@ -42,6 +39,10 @@ namespace MathSite.Areas.Identity.Pages.Account.Manage
                 TasksModel Task = TasksDb.Tasks.Where(x => x.Id == ChoiseId).FirstOrDefault();
                 Task.IsDeleted = 1;
                 TasksDb.SaveChanges();
+            }
+            if (act == "ShowTask")
+            {
+                return Redirect($"/Home/TaskSolve?id={ChoiseId}");
             }
             ViewListCreate();
             return Page();

@@ -2,28 +2,40 @@
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
 @{
+
+
+
+
 }
+<link rel="stylesheet" type="text/css" href="/css/DragDrop.css">
 
 <p>
     <b>Ваше имя:</b><br>
     <b>@ViewData["CurrentUser"] </b><br>
 </p>
 <form method="post">
+    <input type="hidden" name="images" id="images" />
     <p>
         <b>Название вашей задачи:</b><br>
-        <input type="text" name="TaskName" id="task-name" size="40">
+        <input type="text" name="TaskName" required id="task-name" size="40">
     </p>
     <p>
         <b>Условие задачи:</b><Br>
-        <textarea name="TaskCondition" id="task-condition" cols="120" rows="7"></textarea>
+        <textarea name="TaskCondition" id="task-condition" required cols="120" rows="7"></textarea>
     </p>
     <p>
 
         <b>Ответ:</b><br>
         Если ответ всего один введите значение только в одно поле<br>
-        <b>Ответ №1: </b><input name="FirstAnswer" type="text" id="first-answer" size="40"><br>
-        <b>Ответ №2: </b><input name="SecondAnswer" type="text" id="second-answer" size="40"><br>
-        <b>Ответ №3: </b><input name="ThirdAnswer" type="text" id="third-answer" size="40">
+        <div>
+            <b>Ответ №1: </b><input name="FirstAnswer" required type="text" id="first-answer" size="40"><br><br>
+        </div>
+        <div id="second-hiden" hidden>
+            <b>Ответ №2: </b><input name="SecondAnswer" type="text" id="second-answer" size="40"><br><br>
+        </div>
+        <div id="third-hiden" hidden>
+            <b>Ответ №3: </b><input name="ThirdAnswer" type="text" id="third-answer" size="40">
+        </div>
     </p>
     <p>
         <b>Тэги:</b><br>
@@ -31,6 +43,112 @@
         <input type="text" input name="TagName" id="tag-name" size="40">
     </p>
 
+    <div id="drop-area" class="my-form">
+        <p>Загрузите не более 3х изображений, если это необходимо</p>
+        <input type="file" id="fileElem" multiple accept="image/*" onchange="handleFiles(this.files)">
+        <label class="button" for="fileElem">Выбрать изображения</label>  <label class="button" id="delete-elem">Удалить изображения</label>
+        <div id="gallery"></div>
+    </div>
     <button id="create-task" asp-route-Act="create" type="submit" class="btn btn-primary">Создать</button>
-
 </form>
+
+<script>
+
+    let Drop = document.getElementById('drop-area');
+
+    document.getElementById("delete-elem").addEventListener("click", function (e) {
+        document.getElementById("images").value = "";
+        RemoveOld();
+    });
+
+
+   ;['dragenter', 'dragover', 'dragleave', 'drop'].forEach(x => {
+            Drop.addEventListener(x, preventDefaults, false)
+   })
+
+   ;['dragenter', 'dragover'].forEach(x => {
+            Drop.addEventListener(x, highlight, false)
+   })
+
+   ;['dragleave', 'drop'].forEach(x => {
+            Drop.addEventListener(x, unhighlight, false)
+   })
+
+
+    function preventDefaults(e) {
+        e.preventDefault()
+        e.stopPropagation()
+    }
+
+
+    function highlight(e) {
+        Drop.classList.add('highlight')
+    }
+    function unhighlight(e) {
+        Drop.classList.remove('highlight')
+    }
+    Drop.addEventListener('drop', handleDrop, false)
+
+    function handleDrop(e) {
+        let files = e.dataTransfer.files
+        handleFiles(files)
+    }
+    function handleFiles(files) {
+            RemoveOld();
+        files = [...files].slice(0, 3)
+        document.getElementById("images").value = "";
+        files.forEach(LoadFile)
+        files.forEach(PreviewFile)
+    }
+    function RemoveOld() {
+        let del = document.getElementById('gallery')
+        while (del.firstChild) {
+            del.removeChild(del.firstChild);
+        }   
+    }
+
+        function LoadFile(file) {
+            let reader = new FileReader()
+            reader.readAsBinaryString(file)    
+            reader.onloadend = function () { 
+                var base64 = window.btoa(reader.result);
+                console.log(base64);
+                document.getElementById("images").value = document.getElementById("images").value + "|image|" + base64;
+            }
+        }
+
+        function PreviewFile(file) {
+        let reader = new FileReader()
+        reader.readAsDataURL(file)      
+        reader.onloadend = function () {
+            let img = document.createElement('img')
+            img.src = reader.result
+            document.getElementById('gallery').appendChild(img)
+         }
+    }
+
+    document.getElementById("first-answer").addEventListener("keydown", function (e) {
+        var first = document.getElementById("first-answer").value;
+        var third = document.getElementById("third-answer").value;
+        if (first.length > 0) {
+            document.getElementById("second-hiden").hidden = false;
+        }
+        else if (first.length == 0) {
+            document.getElementById("second-answer").value = "";
+            document.getElementById("third-answer").value = "";
+            document.getElementById("second-hiden").hidden = true;
+            document.getElementById("third-hiden").hidden = true;
+        }
+    });
+    document.getElementById("second-answer").addEventListener("keydown", function (e) {
+        var second = document.getElementById("second-answer").value;
+        if (second.length > 0) {
+            document.getElementById("third-hiden").hidden = false;
+        }
+        else if (second.length == 0) {
+            document.getElementById("third-answer").value = "";
+            document.getElementById("third-hiden").hidden = true;
+        }
+    });
+
+</script>

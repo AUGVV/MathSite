@@ -2,4 +2,134 @@
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
 @{
+    int count = 1; 
+
 }
+<link rel="stylesheet" type="text/css" href="/css/Pictures.css">
+<link rel="stylesheet" type="text/css" href="/css/Raiting.css">
+
+<input type="hidden" id="taskid" value="@ViewData["Id"]" />
+<input type="hidden" id="username" value="@ViewData["UserName"]" />
+
+<div class="text-center">
+    <h1>@ViewData["CurrentTask"]</h1><br>
+</div>
+    @if ((int)ViewData["PicturesCount"]! > 0)
+    {
+<div class="slideshow-container">
+    @foreach (var item in Model)
+    {
+        <div class="mySlides">
+            <div class="numbertext">@count / @ViewData["PicturesCount"]</div>
+            <img src=@item style="width:100%">
+        </div>
+        count = count + 1;
+    }
+    @{
+        count = 1;
+    }
+    <a class="prev" onclick="plusSlides(-1)">&#10094;</a>
+    <a class="next" onclick="plusSlides(1)">&#10095;</a>
+    </div>
+        <div style="text-align:center">
+            @foreach (var item in Model)
+            {
+                <span class="dot" onclick="currentSlide(@count)"></span>
+                count = count + 1;
+            }
+        </div><br>
+    }
+    <div class="text-center">
+    <b>Условие:</b><br>
+    @ViewData["CurrentCondition"]<br><br>
+
+
+    <b>Введите ответ:</b><br>
+    <input type="text" name="Answer" id="currentanswer" class="input-bars" ><br><br>
+    <div hidden id="abswer-not-correct">
+        <b style="color:#FF0800">Ответ не верен</b><br><br>
+    </div>
+    <div hidden id="abswer-correct">
+        <b style="color:#0CFF00">Ответ верен!</b><br><br>
+    </div>
+    <button id="toanswer" type="submit" class="btn btn-primary">Ответить</button><br><br>
+</div>
+
+
+    <div class="rating-area">
+        <input type="radio" id="star-5" name="rating" value="5">
+        <label for="star-5" title="Оценка «5»"></label>
+        <input type="radio" id="star-4" name="rating" value="4">
+        <label for="star-4" title="Оценка «4»"></label>
+        <input type="radio" id="star-3" name="rating" value="3">
+        <label for="star-3" title="Оценка «3»"></label>
+        <input type="radio" id="star-2" name="rating" value="2">
+        <label for="star-2" title="Оценка «2»"></label>
+        <input type="radio" id="star-1" name="rating" value="1">
+        <label for="star-1" title="Оценка «1»"></label>
+    </div>
+    <b>Комментарии:</b>
+    <br>
+<textarea name="TaskCondition" id="task-condition"></textarea>
+    <br>
+    <button id="create-task" asp-route-Act="create" type="submit" class="btn btn-primary">Отправить</button>
+
+
+    <script src="/js/signalr/dist/browser/signalr.min.js"></script>
+    <script>
+        const hubConnection = new signalR.HubConnectionBuilder().withUrl("/hubs").build();
+
+        document.getElementById("toanswer").addEventListener("click", function (e) {
+            var CurrentId = document.getElementById("taskid").value;
+            var Answer = document.getElementById("currentanswer").value;
+            var UserName = document.getElementById("username").value;
+
+            if (Answer == null) { alert('Введите ваш ответ') }
+            else {
+                hubConnection.invoke('QuestionAnswer', CurrentId, Answer, UserName).catch(function (err) {
+                    return console.error(err.toString());
+                });
+            }
+        });
+
+        hubConnection.on('Result', function (message) {
+            if (message == true) {
+                document.getElementById("abswer-correct").hidden = false;
+                document.getElementById("abswer-not-correct").hidden = true;
+            }
+            else {
+                document.getElementById("abswer-not-correct").hidden = false;
+                document.getElementById("abswer-correct").hidden = true;
+            }
+        });
+        hubConnection.start();
+
+
+
+        var slideIndex = 1;
+        showSlides(slideIndex);
+
+        function plusSlides(n) {
+            showSlides(slideIndex += n);
+        }
+
+        function currentSlide(n) {
+            showSlides(slideIndex = n);
+        }
+
+        function showSlides(n) {
+            var i;
+            var slides = document.getElementsByClassName("mySlides");
+            var dots = document.getElementsByClassName("dot");
+            if (n > slides.length) { slideIndex = 1 }
+            if (n < 1) { slideIndex = slides.length }
+            for (i = 0; i < slides.length; i++) {
+                slides[i].style.display = "none";
+            }
+            for (i = 0; i < dots.length; i++) {
+                dots[i].className = dots[i].className.replace(" active", "");
+            }
+            slides[slideIndex - 1].style.display = "block";
+            dots[slideIndex - 1].className += " active";
+        }
+    </script>

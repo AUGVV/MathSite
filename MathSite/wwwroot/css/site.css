@@ -35,6 +35,10 @@ html {
   }
 }
 
+.input-bars {
+    width: 40%;
+}
+
 .border-top {
   border-top: 1px solid #e5e5e5;
 }

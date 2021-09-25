@@ -14,13 +14,14 @@
         </tr>
         @foreach (var item in Model.Tasks)
         {
-            <tr>
-                <td>@item.TaskName</td>
-                <td>@item.Condition</td>
-                <td>@item.Rating</td>
-                <td><Button type="submit" asp-route-act="EditTask" asp-route-ChoiseId=@item.Id class="game-button">Редактировать</Button></td>
-                <td><Button type="submit" asp-route-act="DeleteTask" asp-route-ChoiseId=@item.Id class="game-button">Удалить</Button></td>
-            </tr>
+    <tr>
+        <td>@item.TaskName</td>
+        <td>@item.Condition</td>
+        <td>@item.Rating</td>
+        <td><Button type="submit" asp-route-act="ShowTask" asp-route-ChoiseId=@item.Id class="game-button">Просмотреть</Button></td>
+        <td><Button type="submit" asp-route-act="EditTask" asp-route-ChoiseId=@item.Id class="game-button">Редактировать</Button></td>
+        <td><Button type="submit" asp-route-act="DeleteTask" asp-route-ChoiseId=@item.Id class="game-button">Удалить</Button></td>
+    </tr>
         }
     </table>
 </form>
