@@ -3,6 +3,7 @@ using MathSite.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
@@ -29,16 +30,37 @@ namespace MathSite.Controllers
             _signInManager = signInManager;
             db = context;
         }
-        public IActionResult Index()
+        public IActionResult Index(int Id)
         {
-            return View();
+            if(Id>0)
+            {
+                return Redirect($"/Home/TaskSolve?id={Id}");
+            }
+
+            IQueryable<TasksModel> NewTasks;
+            NewTasks = db.Tasks.Where(x=>x.IsDeleted != 1).OrderByDescending(x => x.AddDate).Take(10);
+            IQueryable<TasksModel> TopTasks;
+            TopTasks = db.Tasks.Where(x => x.IsDeleted != 1).OrderByDescending(x => x.Rating).Take(10);
+
+
+            IndexModel indexModel = new IndexModel
+            {
+                NewTasks = NewTasks,
+                TopTasks = TopTasks
+            };
+
+            return View(indexModel);
         }
         
         [Authorize]
-        public IActionResult CreateTask(string Id, string Act, string TaskName, string TaskCondition, string FirstAnswer, string SecondAnswer, string ThirdAnswer, string TagName, string images)
+        public IActionResult CreateTask(string Id, string Act, string TaskName, string TaskCondition, string FirstAnswer, string SecondAnswer, string ThirdAnswer, string TagName, string images, string type)
         {
             string SingInAuthor = _signInManager.Context.User.Identity.Name;
             List<string> ListOfAnswers = new List<string>() { FirstAnswer, SecondAnswer, ThirdAnswer };
+            List<ThemesModel> Themes = new List<ThemesModel>();
+            Themes = db.MathTheme.ToList();
+            SelectList SelectList = new SelectList(Themes, "Theme", "Theme");
+
             ViewData["CurrentUser"] = SingInAuthor;
             if (Id == null)
             {
@@ -46,7 +68,7 @@ namespace MathSite.Controllers
                 if (Act == "create")
                 {
                     Debug.WriteLine("Act");
-                    TasksModel CreateModel = new TasksModel() { TaskName = TaskName, Author = SingInAuthor, Condition = TaskCondition, AddDate = DateTime.Now, IsDeleted = 0, Rating = 0 };
+                    TasksModel CreateModel = new TasksModel() { TaskName = TaskName, Author = SingInAuthor, Condition = TaskCondition, AddDate = DateTime.Now, IsDeleted = 0, Rating = 0, Type = type };
                     db.Tasks.Add(CreateModel);
                     db.SaveChanges();
                     int CurrentId = CreateModel.Id;
@@ -67,7 +89,7 @@ namespace MathSite.Controllers
                     return Redirect("/Identity/Account/Manage/YouTasks");
                 }  
             }
-            return View();
+            return View(SelectList);
         }
 
         public void CreateAnswers(List<string> ListOfAnswers, int CurrentId)
@@ -143,15 +165,21 @@ namespace MathSite.Controllers
         public IActionResult TaskSolve(int id)
         {
             string SingInAuthor = _signInManager.Context.User.Identity.Name;
-
-
+            bool IsAutorize = false;
+            if(SingInAuthor != null)
+            {
+                IsAutorize = true;
+            }
+            ViewData["IsAutorize"] = IsAutorize;
             ViewData["IsVoted"] = false;
             ViewData["Rating"] = 0;
-
-            if (db.UserTaskState.Where(x => x.UserName == SingInAuthor && x.TaskId == id).FirstOrDefault() == null)
+            if (IsAutorize != false)
             {
-                db.UserTaskState.Add(new UserTaskModel() { UserName = SingInAuthor, TaskId = id });
-                db.SaveChanges();
+                if (db.UserTaskState.Where(x => x.UserName == SingInAuthor && x.TaskId == id).FirstOrDefault() == null)
+                {
+                    db.UserTaskState.Add(new UserTaskModel() { UserName = SingInAuthor, TaskId = id });
+                    db.SaveChanges();
+                }
             }
 
             TasksModel CurrentTask = new TasksModel();
@@ -164,14 +192,16 @@ namespace MathSite.Controllers
                 Urls.Add(picture.Reference);
             }
 
-            if (db.UserTaskState.Where(x => x.UserName == SingInAuthor && x.TaskId == id).FirstOrDefault().Voted == 1)
+            if (IsAutorize != false)
             {
-                ViewData["IsVoted"] = true;
-                ViewData["Rating"] = CurrentTask.Rating;
-                Debug.WriteLine(CurrentTask.Rating);
+                if (db.UserTaskState.Where(x => x.UserName == SingInAuthor && x.TaskId == id).FirstOrDefault().Voted == 1)
+                {
+                    ViewData["IsVoted"] = true;
+                    ViewData["Rating"] = CurrentTask.Rating;
+                }
             }
 
-
+            ViewData["TaskType"] = CurrentTask.Type;
             ViewData["CurrentTask"] = CurrentTask.TaskName;
             ViewData["CurrentCondition"] = CurrentTask.Condition;
             ViewData["UserName"] = _signInManager.Context.User.Identity.Name;

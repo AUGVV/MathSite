@@ -25,5 +25,6 @@ namespace MathSite.Models
 
         public int SumRating { get; set; }
 
+        public string Type { get; set; }
     }
 }

@@ -18,6 +18,8 @@ namespace MathSite.Areas.Identity.Pages.Account.Manage
 
         public static string YouTasks => "YouTasks";
 
+        public static string SolvedTasks => "SolvedTasks";
+
         public static string ChangePassword => "ChangePassword";
 
         public static string DownloadPersonalData => "DownloadPersonalData";
@@ -38,6 +40,8 @@ namespace MathSite.Areas.Identity.Pages.Account.Manage
         public static string ChangeLanguageNavClass(ViewContext viewContext) => PageNavClass(viewContext, ChangeLanguage);
         public static string ChangeThemeNavClass(ViewContext viewContext) => PageNavClass(viewContext, ChangeTheme);
         public static string YouTasksNavClass(ViewContext viewContext) => PageNavClass(viewContext, YouTasks);
+
+        public static string SolvedTasksNavClass(ViewContext viewContext) => PageNavClass(viewContext, SolvedTasks);
 
         public static string ChangePasswordNavClass(ViewContext viewContext) => PageNavClass(viewContext, ChangePassword);
 

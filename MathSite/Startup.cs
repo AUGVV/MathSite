@@ -35,7 +35,20 @@ namespace MathSite
             services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             services.AddDatabaseDeveloperPageExceptionFilter();
             services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<ApplicationDbContext>();
-            services.AddControllersWithViews();       
+            services.AddControllersWithViews();
+         //   services.AddAuthentication().AddFacebook(facebookOptions =>
+          //  {
+          //      facebookOptions.AppId = "";
+           //     facebookOptions.AppSecret = "";
+          //  });
+          //  services.AddAuthentication().AddTwitter(twitterOptions =>
+          //  {
+          //      twitterOptions.ConsumerKey = "";
+          //      twitterOptions.ConsumerSecret = "";
+          //      twitterOptions.RetrieveUserDetails = true;
+          //  });
+
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

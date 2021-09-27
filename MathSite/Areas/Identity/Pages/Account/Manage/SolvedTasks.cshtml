@@ -1,0 +1,24 @@
+﻿@page
+@model MathSite.Areas.Identity.Pages.Account.Manage.SolvedTasksModel
+@{
+}
+<form id="view" method="post">
+    <table class="table">
+        <tr>
+            <th><a>Task Name</a></th>
+            <th><a>Condition</a></th>
+            <th><a>Type</a></th>
+        </tr>
+        @foreach (var item in Model.Tasks)
+        {
+    <tr>
+        <td>@item.TaskName</td>
+        <td>@item.Condition</td>
+        <td>@item.Type</td>
+        <td><Button type="submit" asp-route-act="ShowTask" asp-route-ChoiseId=@item.Id class="game-button">Просмотреть</Button></td>
+    </tr>
+        }
+    </table>
+</form>
+
+

@@ -3,7 +3,6 @@
 *@
 @{
     int count = 1;
-    
 }
 <link rel="stylesheet" type="text/css" href="/css/Pictures.css">
 <link rel="stylesheet" type="text/css" href="/css/Raiting.css">
@@ -12,8 +11,14 @@
 <input type="hidden" id="username" value="@ViewData["UserName"]" />
 
 <div class="text-center">
-    <h1>@ViewData["CurrentTask"]</h1><br>
+    <h1>@ViewData["CurrentTask"]</h1>
 </div>
+
+<div class="text-center">
+    <b>Тип задачи:</b>
+    @ViewData["TaskType"]<br><br>
+</div>
+
 @if ((int)ViewData["PicturesCount"]! > 0)
 {
     <div class="slideshow-container">
@@ -40,64 +45,71 @@
     </div>
     <br>
 }
+
 <div class="text-center">
     <b>Условие:</b><br>
     @ViewData["CurrentCondition"]<br><br>
-
-
-    <b>Введите ответ:</b><br>
-    <input type="text" name="Answer" id="currentanswer" class="input-bars"><br><br>
-    <div hidden id="answer-not-correct">
-        <b style="color:#FF0800">Ответ не верен</b><br><br>
-    </div>
-    <div hidden id="answer-correct">
-        <b style="color:#0CFF00">Ответ верен!</b><br><br>
-    </div>
-    <button id="toanswer" type="submit" class="btn btn-primary">Ответить</button><br><br>
 </div>
 
- @if ((bool)ViewData["IsVoted"] == false)
+@if ((bool)ViewData["IsAutorize"] == true)
+{
+    <div class="text-center">
+        <b>Введите ответ:</b><br>
+        <input type="text" name="Answer" id="currentanswer" class="input-bars"><br><br>
+        <div hidden id="answer-not-correct">
+            <b style="color:#FF0800">Ответ не верен</b><br><br>
+        </div>
+        <div hidden id="answer-correct">
+            <b style="color:#0CFF00">Ответ верен!</b><br><br>
+        </div>
+        <button id="toanswer" type="submit" class="btn btn-primary">Ответить</button><br><br>
+    </div>
+
+    @if ((bool)ViewData["IsVoted"] == false)
     {
-<div class="rating-area" id="raitings-active">
-    <input type="radio" id="star-5" name="rating" value="5" onclick="Rating(5)">
-    <label for="star-5" title="Оценка «5»"></label>
-    <input type="radio" id="star-4" name="rating" value="4" onclick="Rating(4)">
-    <label for="star-4" title="Оценка «4»"></label>
-    <input type="radio" id="star-3" name="rating" value="3" onclick="Rating(3)">
-    <label for="star-3" title="Оценка «3»"></label>
-    <input type="radio" id="star-2" name="rating" value="2" onclick="Rating(2)">
-    <label for="star-2" title="Оценка «2»"></label>
-    <input type="radio" id="star-1" name="rating" value="1" onclick="Rating(1)">
-    <label for="star-1" title="Оценка «1»"></label>
-</div>
+        <div class="rating-area" id="raitings-active">
+            <input type="radio" id="star-5" name="rating" value="5" onclick="Rating(5)">
+            <label for="star-5" title="Оценка «5»"></label>
+            <input type="radio" id="star-4" name="rating" value="4" onclick="Rating(4)">
+            <label for="star-4" title="Оценка «4»"></label>
+            <input type="radio" id="star-3" name="rating" value="3" onclick="Rating(3)">
+            <label for="star-3" title="Оценка «3»"></label>
+            <input type="radio" id="star-2" name="rating" value="2" onclick="Rating(2)">
+            <label for="star-2" title="Оценка «2»"></label>
+            <input type="radio" id="star-1" name="rating" value="1" onclick="Rating(1)">
+            <label for="star-1" title="Оценка «1»"></label>
+        </div>
 
-<div class="rating-result" id="raitings-new" hidden></div>
+        <div class="rating-result" id="raitings-new" hidden></div>
     }
     else if ((bool)ViewData["IsVoted"] == true)
     {
-    <div class="rating-result" id="raitings-show">
-        @for (int i = 0; i < 5 - (int)ViewData["Rating"]; i++)
-        {
-            <span></span>
-        }
-        @for (int i = 0; i < (int)ViewData["Rating"]; i++)
-        {
-            <span class="active"> </span>
-        }
-    </div>
+        <div class="rating-result" id="raitings-show">
+            @for (int i = 0; i < 5 - (int)ViewData["Rating"]; i++)
+            {
+                <span></span>
+            }
+            @for (int i = 0; i < (int)ViewData["Rating"]; i++)
+            {
+                <span class="active"> </span>
+            }
+        </div>
     }
 
-
-<b>Комментарии:</b>
-<br>
-<textarea wrap="hard" placeholder="as you say" cols="120" rows="5" style="resize:none;" id="comment"></textarea>
-<br>
-<button id="say-to-task" type="submit" class="btn btn-primary">Отправить</button>
-
+    <b>Комментарии:</b>
+    <br>
+    <textarea wrap="hard" placeholder="as you say" cols="120" rows="5" style="resize:none;" id="comment"></textarea>
+    <br>
+    <button id="say-to-task" type="submit" class="btn btn-primary">Отправить</button>
+}
 
 <script src="/js/signalr/dist/browser/signalr.min.js"></script>
 <script>
     const hubConnection = new signalR.HubConnectionBuilder().withUrl("/hubs").build();
+
+
+    var slideIndex = 1;
+    showSlides(slideIndex);
 
     document.getElementById("toanswer").addEventListener("click", function (e) {
         var CurrentId = document.getElementById("taskid").value;
@@ -156,7 +168,7 @@
     hubConnection.on('Raiting', function (message) {
         var num = Number(message)
         console.log(num);
-        for (var i = 0; i < 5-num; i++) {
+        for (var i = 0; i < 5 - num; i++) {
 
             let span = document.createElement('span');
             document.getElementById('raitings-new').appendChild(span);
@@ -171,9 +183,6 @@
         document.getElementById("raitings-active").hidden = true;
         document.getElementById("raitings-new").hidden = false;
     });
-
-    var slideIndex = 1;
-    showSlides(slideIndex);
 
     function plusSlides(n) {
         showSlides(slideIndex += n);
