@@ -13,6 +13,7 @@ namespace MathSite.Models
         public DbSet<TasksModel> Tasks { get; set; }
         public DbSet<PictureRefModel> PicturesRef { get; set; }
         public DbSet<TagModel> Tags { get; set; }
+        public DbSet<UserTaskModel> UserTaskState { get; set; }
         public TasksContext(DbContextOptions<TasksContext> options) : base(options)
         {
             Database.EnsureCreated();

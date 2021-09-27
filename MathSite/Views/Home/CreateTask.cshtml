@@ -21,7 +21,7 @@
     </p>
     <p>
         <b>Условие задачи:</b><Br>
-        <textarea name="TaskCondition" id="task-condition" required cols="120" rows="7"></textarea>
+        <textarea wrap="hard" name="TaskCondition" id="task-condition" required cols="120" rows="20" ></textarea>
     </p>
     <p>
 
@@ -49,7 +49,7 @@
         <label class="button" for="fileElem">Выбрать изображения</label>  <label class="button" id="delete-elem">Удалить изображения</label>
         <div id="gallery"></div>
     </div>
-    <button id="create-task" asp-route-Act="create" type="submit" class="btn btn-primary">Создать</button>
+    <button id="create-task" asp-route-id="@ViewData["Id"]" type="submit" class="btn btn-primary">Создать</button>
 </form>
 
 <script>

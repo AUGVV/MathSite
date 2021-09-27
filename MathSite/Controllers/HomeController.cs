@@ -33,11 +33,10 @@ namespace MathSite.Controllers
         {
             return View();
         }
-
+        
         [Authorize]
         public IActionResult CreateTask(string Id, string Act, string TaskName, string TaskCondition, string FirstAnswer, string SecondAnswer, string ThirdAnswer, string TagName, string images)
         {
-  
             string SingInAuthor = _signInManager.Context.User.Identity.Name;
             List<string> ListOfAnswers = new List<string>() { FirstAnswer, SecondAnswer, ThirdAnswer };
             ViewData["CurrentUser"] = SingInAuthor;
@@ -130,7 +129,6 @@ namespace MathSite.Controllers
             db.SaveChanges();
         }
 
-
         public IActionResult Privacy()
         {
             return View();
@@ -144,7 +142,20 @@ namespace MathSite.Controllers
 
         public IActionResult TaskSolve(int id)
         {
+            string SingInAuthor = _signInManager.Context.User.Identity.Name;
+
+
+            ViewData["IsVoted"] = false;
+            ViewData["Rating"] = 0;
+
+            if (db.UserTaskState.Where(x => x.UserName == SingInAuthor && x.TaskId == id).FirstOrDefault() == null)
+            {
+                db.UserTaskState.Add(new UserTaskModel() { UserName = SingInAuthor, TaskId = id });
+                db.SaveChanges();
+            }
+
             TasksModel CurrentTask = new TasksModel();
+            CurrentTask = db.Tasks.Where(x => x.Id == id).FirstOrDefault();
             List<PictureRefModel> Pictures = new List<PictureRefModel>();
             Pictures = db.PicturesRef.Where(x => x.TaskId == id)?.ToList();
             List<string> Urls = new List<string>();
@@ -153,13 +164,26 @@ namespace MathSite.Controllers
                 Urls.Add(picture.Reference);
             }
 
-            CurrentTask = db.Tasks.Where(x=>x.Id == id).FirstOrDefault();
+            if (db.UserTaskState.Where(x => x.UserName == SingInAuthor && x.TaskId == id).FirstOrDefault().Voted == 1)
+            {
+                ViewData["IsVoted"] = true;
+                ViewData["Rating"] = CurrentTask.Rating;
+                Debug.WriteLine(CurrentTask.Rating);
+            }
+
 
             ViewData["CurrentTask"] = CurrentTask.TaskName;
             ViewData["CurrentCondition"] = CurrentTask.Condition;
             ViewData["UserName"] = _signInManager.Context.User.Identity.Name;
             ViewData["Id"] = id;
             ViewData["PicturesCount"] = Pictures.Count;
+
+            TaskSolveModel TaskSolveModel = new TaskSolveModel()
+            {
+                Urls = Urls,
+                Comments = null
+            };
+
 
             return View(Urls);
         }

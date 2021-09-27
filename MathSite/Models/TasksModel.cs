@@ -11,7 +11,7 @@ namespace MathSite.Models
 
         public string Author { get; set; }
 
-        public double Rating { get; set; }
+        public int Rating { get; set; }
 
         public string TaskName { get; set; }
 
@@ -20,6 +20,10 @@ namespace MathSite.Models
         public int IsDeleted { get; set; }
 
         public DateTime AddDate { get; set; }
+
+        public int SumVotes { get; set; }
+
+        public int SumRating { get; set; }
 
     }
 }

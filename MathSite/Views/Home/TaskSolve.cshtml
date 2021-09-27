@@ -2,8 +2,8 @@
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
 @{
-    int count = 1; 
-
+    int count = 1;
+    
 }
 <link rel="stylesheet" type="text/css" href="/css/Pictures.css">
 <link rel="stylesheet" type="text/css" href="/css/Raiting.css">
@@ -14,122 +14,188 @@
 <div class="text-center">
     <h1>@ViewData["CurrentTask"]</h1><br>
 </div>
-    @if ((int)ViewData["PicturesCount"]! > 0)
-    {
-<div class="slideshow-container">
-    @foreach (var item in Model)
-    {
-        <div class="mySlides">
-            <div class="numbertext">@count / @ViewData["PicturesCount"]</div>
-            <img src=@item style="width:100%">
-        </div>
-        count = count + 1;
-    }
-    @{
-        count = 1;
-    }
-    <a class="prev" onclick="plusSlides(-1)">&#10094;</a>
-    <a class="next" onclick="plusSlides(1)">&#10095;</a>
+@if ((int)ViewData["PicturesCount"]! > 0)
+{
+    <div class="slideshow-container">
+        @foreach (var item in Model)
+        {
+            <div class="mySlides">
+                <div class="numbertext">@count / @ViewData["PicturesCount"]</div>
+                <img src=@item style="width:100%">
+            </div>
+            count = count + 1;
+        }
+        @{
+            count = 1;
+        }
+        <a class="prev" onclick="plusSlides(-1)">&#10094;</a>
+        <a class="next" onclick="plusSlides(1)">&#10095;</a>
     </div>
-        <div style="text-align:center">
-            @foreach (var item in Model)
-            {
-                <span class="dot" onclick="currentSlide(@count)"></span>
-                count = count + 1;
-            }
-        </div><br>
-    }
-    <div class="text-center">
+    <div style="text-align:center">
+        @foreach (var item in Model)
+        {
+            <span class="dot" onclick="currentSlide(@count)"></span>
+            count = count + 1;
+        }
+    </div>
+    <br>
+}
+<div class="text-center">
     <b>Условие:</b><br>
     @ViewData["CurrentCondition"]<br><br>
 
 
     <b>Введите ответ:</b><br>
-    <input type="text" name="Answer" id="currentanswer" class="input-bars" ><br><br>
-    <div hidden id="abswer-not-correct">
+    <input type="text" name="Answer" id="currentanswer" class="input-bars"><br><br>
+    <div hidden id="answer-not-correct">
         <b style="color:#FF0800">Ответ не верен</b><br><br>
     </div>
-    <div hidden id="abswer-correct">
+    <div hidden id="answer-correct">
         <b style="color:#0CFF00">Ответ верен!</b><br><br>
     </div>
     <button id="toanswer" type="submit" class="btn btn-primary">Ответить</button><br><br>
 </div>
 
+ @if ((bool)ViewData["IsVoted"] == false)
+    {
+<div class="rating-area" id="raitings-active">
+    <input type="radio" id="star-5" name="rating" value="5" onclick="Rating(5)">
+    <label for="star-5" title="Оценка «5»"></label>
+    <input type="radio" id="star-4" name="rating" value="4" onclick="Rating(4)">
+    <label for="star-4" title="Оценка «4»"></label>
+    <input type="radio" id="star-3" name="rating" value="3" onclick="Rating(3)">
+    <label for="star-3" title="Оценка «3»"></label>
+    <input type="radio" id="star-2" name="rating" value="2" onclick="Rating(2)">
+    <label for="star-2" title="Оценка «2»"></label>
+    <input type="radio" id="star-1" name="rating" value="1" onclick="Rating(1)">
+    <label for="star-1" title="Оценка «1»"></label>
+</div>
 
-    <div class="rating-area">
-        <input type="radio" id="star-5" name="rating" value="5">
-        <label for="star-5" title="Оценка «5»"></label>
-        <input type="radio" id="star-4" name="rating" value="4">
-        <label for="star-4" title="Оценка «4»"></label>
-        <input type="radio" id="star-3" name="rating" value="3">
-        <label for="star-3" title="Оценка «3»"></label>
-        <input type="radio" id="star-2" name="rating" value="2">
-        <label for="star-2" title="Оценка «2»"></label>
-        <input type="radio" id="star-1" name="rating" value="1">
-        <label for="star-1" title="Оценка «1»"></label>
+<div class="rating-result" id="raitings-new" hidden></div>
+    }
+    else if ((bool)ViewData["IsVoted"] == true)
+    {
+    <div class="rating-result" id="raitings-show">
+        @for (int i = 0; i < 5 - (int)ViewData["Rating"]; i++)
+        {
+            <span></span>
+        }
+        @for (int i = 0; i < (int)ViewData["Rating"]; i++)
+        {
+            <span class="active"> </span>
+        }
     </div>
-    <b>Комментарии:</b>
-    <br>
-<textarea name="TaskCondition" id="task-condition"></textarea>
-    <br>
-    <button id="create-task" asp-route-Act="create" type="submit" class="btn btn-primary">Отправить</button>
+    }
 
 
-    <script src="/js/signalr/dist/browser/signalr.min.js"></script>
-    <script>
-        const hubConnection = new signalR.HubConnectionBuilder().withUrl("/hubs").build();
+<b>Комментарии:</b>
+<br>
+<textarea wrap="hard" placeholder="as you say" cols="120" rows="5" style="resize:none;" id="comment"></textarea>
+<br>
+<button id="say-to-task" type="submit" class="btn btn-primary">Отправить</button>
 
-        document.getElementById("toanswer").addEventListener("click", function (e) {
-            var CurrentId = document.getElementById("taskid").value;
-            var Answer = document.getElementById("currentanswer").value;
-            var UserName = document.getElementById("username").value;
 
-            if (Answer == null) { alert('Введите ваш ответ') }
-            else {
-                hubConnection.invoke('QuestionAnswer', CurrentId, Answer, UserName).catch(function (err) {
-                    return console.error(err.toString());
-                });
-            }
+<script src="/js/signalr/dist/browser/signalr.min.js"></script>
+<script>
+    const hubConnection = new signalR.HubConnectionBuilder().withUrl("/hubs").build();
+
+    document.getElementById("toanswer").addEventListener("click", function (e) {
+        var CurrentId = document.getElementById("taskid").value;
+        var Answer = document.getElementById("currentanswer").value;
+        var UserName = document.getElementById("username").value;
+
+        if (Answer == null) { alert('Введите ваш ответ') }
+        else {
+            hubConnection.invoke('QuestionAnswer', CurrentId, Answer, UserName).catch(function (err) {
+                return console.error(err.toString());
+            });
+        }
+    });
+    hubConnection.start();
+
+    document.getElementById("say-to-task").addEventListener("click", function (e) {
+        var CurrentId = document.getElementById("taskid").value;
+        var WhatSay = document.getElementById("comment").value;
+        var UserName = document.getElementById("username").value;
+
+        if (WhatSay == null) { alert('Комментарий не должен быть пустыми') }
+        else {
+            hubConnection.invoke('AddToComment', CurrentId, WhatSay, UserName).catch(function (err) {
+                return console.error(err.toString());
+            });
+        }
+    });
+    hubConnection.start();
+
+    hubConnection.on('CommentDo', function (message) {
+
+    });
+
+
+    hubConnection.on('Result', function (message) {
+        if (message == true) {
+            document.getElementById("answer-correct").hidden = false;
+            document.getElementById("answer-not-correct").hidden = true;
+        }
+        else {
+            document.getElementById("answer-not-correct").hidden = false;
+            document.getElementById("answer-correct").hidden = true;
+        }
+    });
+
+    function Rating(e) {
+        var UserName = document.getElementById("username").value;
+        var CurrentId = document.getElementById("taskid").value;
+        hubConnection.invoke('AddRating', e, CurrentId, UserName).catch(function (err) {
+            return console.error(err.toString());
         });
+        console.log(e);
+    }
+    hubConnection.start();
 
-        hubConnection.on('Result', function (message) {
-            if (message == true) {
-                document.getElementById("abswer-correct").hidden = false;
-                document.getElementById("abswer-not-correct").hidden = true;
-            }
-            else {
-                document.getElementById("abswer-not-correct").hidden = false;
-                document.getElementById("abswer-correct").hidden = true;
-            }
-        });
-        hubConnection.start();
+    hubConnection.on('Raiting', function (message) {
+        var num = Number(message)
+        console.log(num);
+        for (var i = 0; i < 5-num; i++) {
 
+            let span = document.createElement('span');
+            document.getElementById('raitings-new').appendChild(span);
+        }
+        for (var i = 0; i < num; i++) {
 
-
-        var slideIndex = 1;
-        showSlides(slideIndex);
-
-        function plusSlides(n) {
-            showSlides(slideIndex += n);
+            let span = document.createElement('span');
+            span.classList.add("active");
+            document.getElementById('raitings-new').appendChild(span);
         }
 
-        function currentSlide(n) {
-            showSlides(slideIndex = n);
-        }
+        document.getElementById("raitings-active").hidden = true;
+        document.getElementById("raitings-new").hidden = false;
+    });
 
-        function showSlides(n) {
-            var i;
-            var slides = document.getElementsByClassName("mySlides");
-            var dots = document.getElementsByClassName("dot");
-            if (n > slides.length) { slideIndex = 1 }
-            if (n < 1) { slideIndex = slides.length }
-            for (i = 0; i < slides.length; i++) {
-                slides[i].style.display = "none";
-            }
-            for (i = 0; i < dots.length; i++) {
-                dots[i].className = dots[i].className.replace(" active", "");
-            }
-            slides[slideIndex - 1].style.display = "block";
-            dots[slideIndex - 1].className += " active";
+    var slideIndex = 1;
+    showSlides(slideIndex);
+
+    function plusSlides(n) {
+        showSlides(slideIndex += n);
+    }
+
+    function currentSlide(n) {
+        showSlides(slideIndex = n);
+    }
+
+    function showSlides(n) {
+        var i;
+        var slides = document.getElementsByClassName("mySlides");
+        var dots = document.getElementsByClassName("dot");
+        if (n > slides.length) { slideIndex = 1 }
+        if (n < 1) { slideIndex = slides.length }
+        for (i = 0; i < slides.length; i++) {
+            slides[i].style.display = "none";
         }
-    </script>
+        for (i = 0; i < dots.length; i++) {
+            dots[i].className = dots[i].className.replace(" active", "");
+        }
+        slides[slideIndex - 1].style.display = "block";
+        dots[slideIndex - 1].className += " active";
+    }
+</script>

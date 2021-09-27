@@ -45,3 +45,30 @@
 .rate-area > label:active {
     position: relative;
 }
+
+.rating-result {
+    overflow: hidden;
+    width: 265px;
+    margin: 0px -45px;
+}
+
+    .rating-result span {
+        float: right;
+        width: 42px;
+        padding: 0;
+        cursor: pointer;
+        font-size: 32px;
+        line-height: 32px;
+        color: lightgrey;
+        text-shadow: 1px 1px #bbb;
+    }
+
+    .rating-result > span:before {
+        content: '★';
+    }
+
+    .rating-result > span.active {
+        background-color: white;
+        color: gold;
+        text-shadow: 1px 1px goldenrod;
+    }
