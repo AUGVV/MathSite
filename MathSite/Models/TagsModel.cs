@@ -5,13 +5,11 @@ using System.Threading.Tasks;
 
 namespace MathSite.Models
 {
-    public class TagModel
+    public class TagsModel
     {
         public int Id { get; set; }
 
-        public int TaskId { get; set; }
-
-        public string tag { get; set; }
+        public string TagName { get; set; }
 
     }
 }

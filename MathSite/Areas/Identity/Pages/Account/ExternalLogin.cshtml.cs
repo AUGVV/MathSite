@@ -122,8 +122,8 @@ namespace MathSite.Areas.Identity.Pages.Account
             if (ModelState.IsValid)
             {
                 var user = new IdentityUser { UserName = Input.Email, Email = Input.Email };
-
                 var result = await _userManager.CreateAsync(user);
+
                 if (result.Succeeded)
                 {
                     result = await _userManager.AddLoginAsync(user, info);
@@ -140,15 +140,11 @@ namespace MathSite.Areas.Identity.Pages.Account
                             values: new { area = "Identity", userId = userId, code = code },
                             protocol: Request.Scheme);
 
-                        await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
-                            $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
-
-                        // If account confirmation is required, we need to show the link if we don't have a real email sender
-                        if (_userManager.Options.SignIn.RequireConfirmedAccount)
-                        {
-                            return RedirectToPage("./RegisterConfirmation", new { Email = Input.Email });
-                        }
-
+                        await _emailSender.SendEmailAsync(Input.Email, "Confirm your email", $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+                      
+                        code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(code));
+                        await _userManager.ConfirmEmailAsync(user, code);
+      
                         await _signInManager.SignInAsync(user, isPersistent: false, info.LoginProvider);
 
                         return LocalRedirect(returnUrl);

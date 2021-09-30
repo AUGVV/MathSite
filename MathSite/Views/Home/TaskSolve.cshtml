@@ -6,9 +6,19 @@
 }
 <link rel="stylesheet" type="text/css" href="/css/Pictures.css">
 <link rel="stylesheet" type="text/css" href="/css/Raiting.css">
+<link rel="stylesheet" type="text/css" href="/css/FindBar.css">
 
-<input type="hidden" id="taskid" value="@ViewData["Id"]" />
+<input type="hidden" id="taskid" name="id" value="@ViewData["Id"]" />
 <input type="hidden" id="username" value="@ViewData["UserName"]" />
+
+<div class="d1">
+    <form>
+        <input type="text" name="SearchText" placeholder="Искать здесь...">
+        <input type="hidden" name="id" value="@ViewData["Id"]">
+        <button type="submit"></button>
+    </form>
+</div>
+<br>
 
 <div class="text-center">
     <h1>@ViewData["CurrentTask"]</h1>
@@ -107,7 +117,7 @@
 <script>
     const hubConnection = new signalR.HubConnectionBuilder().withUrl("/hubs").build();
 
-
+    var slideCount = @ViewData["PicturesCount"];
     var slideIndex = 1;
     showSlides(slideIndex);
 
@@ -184,27 +194,30 @@
         document.getElementById("raitings-new").hidden = false;
     });
 
-    function plusSlides(n) {
-        showSlides(slideIndex += n);
-    }
 
-    function currentSlide(n) {
-        showSlides(slideIndex = n);
-    }
+        function plusSlides(n) {
+            showSlides(slideIndex += n);
+        }
+
+        function currentSlide(n) {
+            showSlides(slideIndex = n);
+        }
 
     function showSlides(n) {
-        var i;
-        var slides = document.getElementsByClassName("mySlides");
-        var dots = document.getElementsByClassName("dot");
-        if (n > slides.length) { slideIndex = 1 }
-        if (n < 1) { slideIndex = slides.length }
-        for (i = 0; i < slides.length; i++) {
-            slides[i].style.display = "none";
+        if (slideCount > 0) {
+            var i;
+            var slides = document.getElementsByClassName("mySlides");
+            var dots = document.getElementsByClassName("dot");
+            if (n > slides.length) { slideIndex = 1 }
+            if (n < 1) { slideIndex = slides.length }
+            for (i = 0; i < slides.length; i++) {
+                slides[i].style.display = "none";
+            }
+            for (i = 0; i < dots.length; i++) {
+                dots[i].className = dots[i].className.replace(" active", "");
+            }
+            slides[slideIndex - 1].style.display = "block";
+            dots[slideIndex - 1].className += " active";
         }
-        for (i = 0; i < dots.length; i++) {
-            dots[i].className = dots[i].className.replace(" active", "");
-        }
-        slides[slideIndex - 1].style.display = "block";
-        dots[slideIndex - 1].className += " active";
-    }
+     }
 </script>

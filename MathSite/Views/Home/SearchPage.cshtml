@@ -1,0 +1,25 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+<link rel="stylesheet" type="text/css" href="/css/FindBar.css">
+
+<div class="text-center">
+    <h1>На сайте найдено</h1>
+</div><br>
+<div class="d1">
+    <form>
+        <input type="text" name="SearchText" placeholder="Искать здесь...">
+        <button type="submit"></button>
+    </form>
+</div>
+<br>
+<br>
+@foreach (var item in Model)
+{
+    if (item.IsDeleted == 0)
+    {
+        <p><a href="/Home/TaskSolve?id=@item.Id">"@ViewData["SearchText"]" найдено в @item.TaskName</a><br>Тема:@item.Type</p>
+    }
+}

@@ -2,3 +2,19 @@
 @model MathSite.Areas.Identity.Pages.Account.Manage.ChangeThemeModel
 @{
 }
+<link rel="stylesheet" type="text/css" href="/css/SwitchButtons.css">
+
+<b>Ночной режим</b><br><br>
+Вкл<div id="button" class="switch-btn"></div>выкл
+
+<script>
+    document.getElementById("button").addEventListener("click", function (e) {
+        if (document.getElementById("button").classList.contains('switch-on') == false) {
+            document.getElementById("button").classList.add("switch-on");
+        }
+        else if (document.getElementById("button").classList.contains('switch-on') == true) {
+            document.getElementById("button").classList.remove("switch-on");
+        }
+    });
+</script>
+

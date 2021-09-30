@@ -1,9 +1,11 @@
 ﻿
+using MathSite.Functions;
 using MathSite.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
@@ -30,11 +32,15 @@ namespace MathSite.Controllers
             _signInManager = signInManager;
             db = context;
         }
-        public IActionResult Index(int Id)
+        public IActionResult Index(int Id, string SearchText)
         {
             if(Id>0)
             {
                 return Redirect($"/Home/TaskSolve?id={Id}");
+            }
+            if(SearchText != null)
+            {
+                return Redirect($"/Home/SearchPage?SearchText={SearchText}");
             }
 
             IQueryable<TasksModel> NewTasks;
@@ -42,7 +48,7 @@ namespace MathSite.Controllers
             IQueryable<TasksModel> TopTasks;
             TopTasks = db.Tasks.Where(x => x.IsDeleted != 1).OrderByDescending(x => x.Rating).Take(10);
 
-
+            
             IndexModel indexModel = new IndexModel
             {
                 NewTasks = NewTasks,
@@ -53,27 +59,27 @@ namespace MathSite.Controllers
         }
         
         [Authorize]
-        public IActionResult CreateTask(string Id, string Act, string TaskName, string TaskCondition, string FirstAnswer, string SecondAnswer, string ThirdAnswer, string TagName, string images, string type)
+        public IActionResult CreateTask(string Id, string Act, string TaskName, string TaskCondition, string FirstAnswer, string SecondAnswer, string ThirdAnswer, string Tags, string images, string type)
         {
             string SingInAuthor = _signInManager.Context.User.Identity.Name;
+
             List<string> ListOfAnswers = new List<string>() { FirstAnswer, SecondAnswer, ThirdAnswer };
-            List<ThemesModel> Themes = new List<ThemesModel>();
-            Themes = db.MathTheme.ToList();
+            List<ThemesModel> Themes = db.MathTheme.ToList();
             SelectList SelectList = new SelectList(Themes, "Theme", "Theme");
 
             ViewData["CurrentUser"] = SingInAuthor;
-            if (Id == null)
+            if (Id == null && Act == "create")
             {
-                Debug.WriteLine("id=0");
-                if (Act == "create")
-                {
-                    Debug.WriteLine("Act");
                     TasksModel CreateModel = new TasksModel() { TaskName = TaskName, Author = SingInAuthor, Condition = TaskCondition, AddDate = DateTime.Now, IsDeleted = 0, Rating = 0, Type = type };
                     db.Tasks.Add(CreateModel);
                     db.SaveChanges();
                     int CurrentId = CreateModel.Id;
                     CreateAnswers(ListOfAnswers, CurrentId);
-                    CreateTags(TagName, CurrentId);
+                   if (Tags != null)
+                   {
+                       Debug.WriteLine("Tag works");
+                       CreateTags TagsCreator = new CreateTags(Tags, CurrentId, db);
+                   }
 
                     if (images != null)
                     {
@@ -87,7 +93,6 @@ namespace MathSite.Controllers
                         }
                     }
                     return Redirect("/Identity/Account/Manage/YouTasks");
-                }  
             }
             return View(SelectList);
         }
@@ -105,21 +110,6 @@ namespace MathSite.Controllers
                     db.SaveChanges();
                 }
             }     
-        }
-
-        public void CreateTags(string Tags, int CurrentId)
-        {
-            if (Tags != null)
-            {
-                string[] SplitTags = Tags.ToLower().Split(' ');
-
-                foreach (string tag in SplitTags)
-                {
-                    TagModel OneTag = new TagModel() { TaskId = CurrentId, tag = tag };
-                    db.Tags.Add(OneTag);
-                    db.SaveChanges();
-                }
-            }
         }
 
         public void Uploader(string image, int id)
@@ -162,8 +152,13 @@ namespace MathSite.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
-        public IActionResult TaskSolve(int id)
+        public IActionResult TaskSolve(int id, string SearchText)
         {
+            if (SearchText != null)
+            {
+                return Redirect($"/Home/SearchPage?SearchText={SearchText}");
+            }
+
             string SingInAuthor = _signInManager.Context.User.Identity.Name;
             bool IsAutorize = false;
             if(SingInAuthor != null)
@@ -173,14 +168,16 @@ namespace MathSite.Controllers
             ViewData["IsAutorize"] = IsAutorize;
             ViewData["IsVoted"] = false;
             ViewData["Rating"] = 0;
-            if (IsAutorize != false)
-            {
-                if (db.UserTaskState.Where(x => x.UserName == SingInAuthor && x.TaskId == id).FirstOrDefault() == null)
+
+                if (IsAutorize != false)
                 {
-                    db.UserTaskState.Add(new UserTaskModel() { UserName = SingInAuthor, TaskId = id });
-                    db.SaveChanges();
+                    if (db.UserTaskState.Where(x => x.UserName == SingInAuthor && x.TaskId == id).FirstOrDefault() == null)
+                    {
+                        db.UserTaskState.Add(new UserTaskModel() { UserName = SingInAuthor, TaskId = id });
+                        db.SaveChanges();
+                    }
                 }
-            }
+
 
             TasksModel CurrentTask = new TasksModel();
             CurrentTask = db.Tasks.Where(x => x.Id == id).FirstOrDefault();
@@ -213,9 +210,24 @@ namespace MathSite.Controllers
                 Urls = Urls,
                 Comments = null
             };
-
-
             return View(Urls);
         }
+
+
+
+        public IActionResult SearchPage(string SearchText)
+        {
+            ViewData["SearchText"] = SearchText;
+            if (SearchText != null)
+            {
+                IQueryable<TasksModel> results = db.Tasks.Where(x => EF.Functions.FreeText(x.TaskName, SearchText) || EF.Functions.FreeText(x.Condition, SearchText) || EF.Functions.FreeText(x.Type, SearchText));
+                return View(results);
+            }
+            else
+            {
+                return View();
+            }
+        }
+        
     }
 }
