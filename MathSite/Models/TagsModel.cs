@@ -11,5 +11,6 @@ namespace MathSite.Models
 
         public string TagName { get; set; }
 
+        public int Count { get; set; }
     }
 }

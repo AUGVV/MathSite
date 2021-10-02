@@ -7,14 +7,15 @@
 <link rel="stylesheet" type="text/css" href="/css/Pictures.css">
 <link rel="stylesheet" type="text/css" href="/css/Raiting.css">
 <link rel="stylesheet" type="text/css" href="/css/FindBar.css">
+<link rel="stylesheet" type="text/css" href="/css/Tags.css">
 
-<input type="hidden" id="taskid" name="id" value="@ViewData["Id"]" />
+<input type="hidden" id="taskid" name="CurrentId" value="@ViewData["Id"]" />
 <input type="hidden" id="username" value="@ViewData["UserName"]" />
 
 <div class="d1">
     <form>
         <input type="text" name="SearchText" placeholder="Искать здесь...">
-        <input type="hidden" name="id" value="@ViewData["Id"]">
+        <input type="hidden" name="CurrentId" value="@ViewData["Id"]">
         <button type="submit"></button>
     </form>
 </div>
@@ -26,13 +27,21 @@
 
 <div class="text-center">
     <b>Тип задачи:</b>
-    @ViewData["TaskType"]<br><br>
-</div>
+    @ViewData["TaskType"]<br>
+</div><br>
+
+<div class="text-center">
+    @foreach (var item in Model.Tags)
+    {
+       <span class="static-tag">#@item.TagName</span> 
+    }
+    </div>
+<br>
 
 @if ((int)ViewData["PicturesCount"]! > 0)
 {
     <div class="slideshow-container">
-        @foreach (var item in Model)
+        @foreach (var item in Model.Urls)
         {
             <div class="mySlides">
                 <div class="numbertext">@count / @ViewData["PicturesCount"]</div>
@@ -47,7 +56,7 @@
         <a class="next" onclick="plusSlides(1)">&#10095;</a>
     </div>
     <div style="text-align:center">
-        @foreach (var item in Model)
+        @foreach (var item in Model.Urls)
         {
             <span class="dot" onclick="currentSlide(@count)"></span>
             count = count + 1;

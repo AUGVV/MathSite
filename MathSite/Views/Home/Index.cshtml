@@ -2,6 +2,7 @@
 
 }
 <link rel="stylesheet" type="text/css" href="/css/FindBar.css">
+<link rel="stylesheet" type="text/css" href="/css/Tags.css">
 
 <div class="d1">
     <form>
@@ -12,44 +13,56 @@
 <br>
 <br>
 <div>
-    <button id="recent" type="submit" class="btn btn-primary">Недавние</button>
-    <button id="raitings" type="submit" class="btn btn-primary">Топ-10</button>
-    <button type="submit" class="btn btn-primary">Обновить</button>
-    <br>
-    <form method="post">
-        <table class="table" id="recent-table">
-            <tr>
-                <th><a>Название задачи</a></th>
-                <th><a>Тип задачи</a></th>
-                <th><a>Дата добавления</a></th>
-            </tr>
-            @foreach (var item in Model.NewTasks)
-            {
-                <tr><td>@item.TaskName</td><td>@item.Type</td><td>@item.AddDate</td><td><button type="submit" asp-route-Id="@item.Id" class="btn btn-primary">Решить</button></td></tr>
-            }
-        </table>
-        <table hidden class="table" id="raiting-table">
-            <tr>
-                <th><a>Название задачи</a></th>
-                <th><a>Тип задачи</a></th>
-                <th><a>Рейтинг</a></th>
-            </tr>
-            @foreach (var item in Model.TopTasks)
-            {
-                <tr><td>@item.TaskName</td><td>@item.Type</td><td>@item.Rating /5</td><td><button type="submit" asp-route-Id="@item.Id" class="btn btn-primary">Решить</button></td></tr>
-            }
-        </table>
-    </form>
+    <div class="text-center">
+        <button id="recent" type="submit" class="btn btn-primary">Недавние</button>
+        <button id="raitings" type="submit" class="btn btn-primary">Топ-10</button>
+        <button id="reload" type="submit" class="btn btn-primary">Обновить</button>
+        <div />
+
+        <br>
+        <form method="post">
+            <table class="table" id="recent-table">
+                <tr>
+                    <th><a>Название задачи</a></th>
+                    <th><a>Тип задачи</a></th>
+                    <th><a>Дата добавления</a></th>
+                </tr>
+                @foreach (var item in Model.NewTasks)
+                {
+                    <tr><td>@item.TaskName</td><td>@item.Type</td><td>@item.AddDate</td><td><button type="submit" asp-route-Id="@item.Id" class="btn btn-primary">Решить</button></td></tr>
+                }
+            </table>
+            <table hidden class="table" id="raiting-table">
+                <tr>
+                    <th><a>Название задачи</a></th>
+                    <th><a>Тип задачи</a></th>
+                    <th><a>Рейтинг</a></th>
+                </tr>
+                @foreach (var item in Model.TopTasks)
+                {
+                    <tr><td>@item.TaskName</td><td>@item.Type</td><td>@item.Rating /5</td><td><button type="submit" asp-route-Id="@item.Id" class="btn btn-primary">Решить</button></td></tr>
+                }
+            </table><br><br>
+
+            <div class="tags">
+                @foreach (var item in Model.Tags)
+                {
+                    <button id="raitings" type="submit" asp-route-tag="@item.Id" class="tag-button">#@item.TagName (@item.Count)</button>
+                }
+            </div><br><br>
+        </form>
+    </div>
 </div>
-
-<script>
-    document.getElementById("recent").addEventListener("click", function (e) {
-        document.getElementById("recent-table").hidden = false;
-        document.getElementById("raiting-table").hidden = true;
-    });
-    document.getElementById("raitings").addEventListener("click", function (e) {
-        document.getElementById("recent-table").hidden = true;
-        document.getElementById("raiting-table").hidden = false;
-    });
-
-</script>
+        <script>
+            document.getElementById("recent").addEventListener("click", function (e) {
+                document.getElementById("recent-table").hidden = false;
+                document.getElementById("raiting-table").hidden = true;
+            });
+            document.getElementById("raitings").addEventListener("click", function (e) {
+                document.getElementById("recent-table").hidden = true;
+                document.getElementById("raiting-table").hidden = false;
+            });
+            document.getElementById("reload").addEventListener("click", function (e) {
+                location.reload();
+            });
+        </script>

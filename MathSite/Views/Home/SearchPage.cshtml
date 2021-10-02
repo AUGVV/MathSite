@@ -20,6 +20,6 @@
 {
     if (item.IsDeleted == 0)
     {
-        <p><a href="/Home/TaskSolve?id=@item.Id">"@ViewData["SearchText"]" найдено в @item.TaskName</a><br>Тема:@item.Type</p>
+        <p><a href="/Home/TaskSolve?CurrentId=@item.Id">"@ViewData["SearchText"]" найдено в @item.TaskName</a><br>Тема:@item.Type</p>
     }
 }

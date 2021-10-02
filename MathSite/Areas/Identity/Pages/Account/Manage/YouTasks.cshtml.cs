@@ -34,15 +34,19 @@ namespace MathSite.Areas.Identity.Pages.Account.Manage
             {
                 return Redirect("/Home/CreateTask");
             }
-            if(act == "DeleteTask")
+            else if(act == "DeleteTask")
             {
                 TasksModel Task = TasksDb.Tasks.Where(x => x.Id == ChoiseId).FirstOrDefault();
                 Task.IsDeleted = 1;
                 TasksDb.SaveChanges();
             }
-            if (act == "ShowTask")
+            else if (act == "EditTask")
             {
-                return Redirect($"/Home/TaskSolve?id={ChoiseId}");
+                return Redirect($"/Home/EditTaskPage?CurrentId={ChoiseId}");
+            }
+            else if (act == "ShowTask")
+            {
+                return Redirect($"/Home/TaskSolve?CurrentId={ChoiseId}");
             }
             ViewListCreate();
             return Page();

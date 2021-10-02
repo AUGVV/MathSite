@@ -32,27 +32,34 @@ namespace MathSite.Controllers
             _signInManager = signInManager;
             db = context;
         }
-        public IActionResult Index(int Id, string SearchText)
+        public IActionResult Index(string SearchText, int? Tag, int? Id)
         {
-            if(Id>0)
+            if(Id!=null)
             {
-                return Redirect($"/Home/TaskSolve?id={Id}");
+                return Redirect($"/Home/TaskSolve?CurrentId={Id}");
             }
-            if(SearchText != null)
+            else if(SearchText != null)
             {
                 return Redirect($"/Home/SearchPage?SearchText={SearchText}");
             }
+            else if(Tag!= null)
+            {
+                return Redirect($"/Home/SearchPage?Tag={Tag}");
+            }    
+
 
             IQueryable<TasksModel> NewTasks;
             NewTasks = db.Tasks.Where(x=>x.IsDeleted != 1).OrderByDescending(x => x.AddDate).Take(10);
             IQueryable<TasksModel> TopTasks;
             TopTasks = db.Tasks.Where(x => x.IsDeleted != 1).OrderByDescending(x => x.Rating).Take(10);
+            IQueryable<TagsModel> Tags;
+            Tags = db.Tags;
 
-            
             IndexModel indexModel = new IndexModel
             {
                 NewTasks = NewTasks,
-                TopTasks = TopTasks
+                TopTasks = TopTasks,
+                Tags = Tags
             };
 
             return View(indexModel);
@@ -66,6 +73,7 @@ namespace MathSite.Controllers
             List<string> ListOfAnswers = new List<string>() { FirstAnswer, SecondAnswer, ThirdAnswer };
             List<ThemesModel> Themes = db.MathTheme.ToList();
             SelectList SelectList = new SelectList(Themes, "Theme", "Theme");
+            IQueryable<TagsModel> TagsList = db.Tags;
 
             ViewData["CurrentUser"] = SingInAuthor;
             if (Id == null && Act == "create")
@@ -77,7 +85,6 @@ namespace MathSite.Controllers
                     CreateAnswers(ListOfAnswers, CurrentId);
                    if (Tags != null)
                    {
-                       Debug.WriteLine("Tag works");
                        CreateTags TagsCreator = new CreateTags(Tags, CurrentId, db);
                    }
 
@@ -94,18 +101,22 @@ namespace MathSite.Controllers
                     }
                     return Redirect("/Identity/Account/Manage/YouTasks");
             }
-            return View(SelectList);
+
+            CreateTaskModel CreateTaskModel = new CreateTaskModel()
+            {
+                Tags = TagsList,
+                TaskType = SelectList
+            }; 
+            return View(CreateTaskModel);
         }
 
         public void CreateAnswers(List<string> ListOfAnswers, int CurrentId)
         {
-            int Order = 0;
             foreach(string Answer in ListOfAnswers)
             {
                 if (Answer != null)
                 {
-                    AnswersModel AnswerToBase = new AnswersModel() { Answer = Answer.Replace(" ", ""), TaskId = CurrentId, Order = Order };
-                    Order++;
+                    AnswersModel AnswerToBase = new AnswersModel() { Answer = Answer.Replace(" ", ""), TaskId = CurrentId };
                     db.Answers.Add(AnswerToBase);
                     db.SaveChanges();
                 }
@@ -131,13 +142,13 @@ namespace MathSite.Controllers
             json.Root ResponseJson = JsonConvert.DeserializeObject<json.Root>(json);
             if (ResponseJson.data.url != null)
             {
-                ReferenceToBase(ResponseJson.data.url, id);
+                ReferenceToBase(ResponseJson.data.url, ResponseJson.data.delete_url, id);
             }
         }
 
-        public void ReferenceToBase(string Url, int Taskid)
+        public void ReferenceToBase(string Url, string DeleteUrl, int Taskid)
         {
-            db.PicturesRef.Add(new PictureRefModel() { Reference = Url, TaskId = Taskid});
+            db.PicturesRef.Add(new PictureRefModel() { Reference = Url, TaskId = Taskid, DeleteReference = DeleteUrl });
             db.SaveChanges();
         }
 
@@ -152,11 +163,18 @@ namespace MathSite.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
-        public IActionResult TaskSolve(int id, string SearchText)
+        public IActionResult TaskSolve(int CurrentId, string SearchText)
         {
             if (SearchText != null)
             {
                 return Redirect($"/Home/SearchPage?SearchText={SearchText}");
+            }
+
+            TasksModel CurrentTask = new TasksModel();
+            CurrentTask = db.Tasks.Where(x => x.Id == CurrentId).FirstOrDefault();
+            if(CurrentTask == null)
+            {
+                return Redirect("/Home/Index");
             }
 
             string SingInAuthor = _signInManager.Context.User.Identity.Name;
@@ -169,55 +187,110 @@ namespace MathSite.Controllers
             ViewData["IsVoted"] = false;
             ViewData["Rating"] = 0;
 
-                if (IsAutorize != false)
-                {
-                    if (db.UserTaskState.Where(x => x.UserName == SingInAuthor && x.TaskId == id).FirstOrDefault() == null)
-                    {
-                        db.UserTaskState.Add(new UserTaskModel() { UserName = SingInAuthor, TaskId = id });
+                if ((IsAutorize != false) && (db.UserTaskState.Where(x => x.UserName == SingInAuthor && x.TaskId == CurrentId).FirstOrDefault() == null))
+                {   
+                        db.UserTaskState.Add(new UserTaskModel() { UserName = SingInAuthor, TaskId = CurrentId });
                         db.SaveChanges();
-                    }
                 }
 
-
-            TasksModel CurrentTask = new TasksModel();
-            CurrentTask = db.Tasks.Where(x => x.Id == id).FirstOrDefault();
             List<PictureRefModel> Pictures = new List<PictureRefModel>();
-            Pictures = db.PicturesRef.Where(x => x.TaskId == id)?.ToList();
+            Pictures = db.PicturesRef.Where(x => x.TaskId == CurrentId)?.ToList();
             List<string> Urls = new List<string>();
+            IQueryable<TagsModel> Tags = db.TaskTag.Where(x=>x.TaskId == CurrentId).Join(db.Tags, f => f.Tag, t => t.Id, (f, t) => new TagsModel() { TagName = t.TagName });
+        
             foreach(PictureRefModel picture in Pictures)
             {
                 Urls.Add(picture.Reference);
             }
 
-            if (IsAutorize != false)
+            if ((IsAutorize != false) && (db.UserTaskState.Where(x => x.UserName == SingInAuthor && x.TaskId == CurrentId).FirstOrDefault().Voted == 1))
             {
-                if (db.UserTaskState.Where(x => x.UserName == SingInAuthor && x.TaskId == id).FirstOrDefault().Voted == 1)
-                {
                     ViewData["IsVoted"] = true;
                     ViewData["Rating"] = CurrentTask.Rating;
-                }
             }
 
             ViewData["TaskType"] = CurrentTask.Type;
             ViewData["CurrentTask"] = CurrentTask.TaskName;
             ViewData["CurrentCondition"] = CurrentTask.Condition;
             ViewData["UserName"] = _signInManager.Context.User.Identity.Name;
-            ViewData["Id"] = id;
+            ViewData["Id"] = CurrentId;
             ViewData["PicturesCount"] = Pictures.Count;
 
             TaskSolveModel TaskSolveModel = new TaskSolveModel()
             {
                 Urls = Urls,
-                Comments = null
+                Tags = Tags
             };
-            return View(Urls);
+            return View(TaskSolveModel);
         }
 
 
 
-        public IActionResult SearchPage(string SearchText)
+        [Authorize]
+        public IActionResult EditTaskPage(int? CurrentId, string SearchText, int? Tag)
+        {
+            string SingInAuthor = _signInManager.Context.User.Identity.Name;
+
+            List<ThemesModel> Themes = db.MathTheme.ToList();
+            SelectList SelectList = new SelectList(Themes, "Theme", "Theme");
+
+            TasksModel CurrentTask = new TasksModel();
+            CurrentTask = db.Tasks.Where(x => x.Id == CurrentId).FirstOrDefault();
+
+            if (CurrentId != null)
+            {
+                if(CurrentTask == null)
+                {
+                    return Redirect($"/Identity/Account/Manage/YouTasks");
+                }    
+                else if(CurrentTask.Author != SingInAuthor)
+                {
+                    return Redirect($"/Identity/Account/Manage/YouTasks");
+                }
+            }
+            else
+            {
+                return Redirect($"/Identity/Account/Manage/YouTasks");
+            }
+
+            ViewData["CurrentId"] = CurrentId;
+            ViewData["CurrentUser"] = SingInAuthor;
+            ViewData["TaskName"] = CurrentTask.TaskName;
+            ViewData["TaskType"] = CurrentTask.Type;
+            ViewData["TaskCondition"] = CurrentTask.Condition;
+
+            IQueryable<TagsModel> TaskTags = db.TaskTag.Where(x=>x.TaskId == CurrentId).Join(db.Tags, f => f.Tag, t => t.Id, (f, t) => new TagsModel() { TagName = t.TagName });
+
+            IQueryable<TagsModel> AllTags = db.Tags;
+
+            IQueryable<AnswersModel> Answers = db.Answers.Where(x=>x.TaskId == CurrentId);
+
+            IQueryable<PictureRefModel> Pictures = db.PicturesRef.Where(x => x.TaskId == CurrentId);
+
+            EditTaskModel editTaskModel = new EditTaskModel()
+            {
+                SelectList = SelectList,
+                Tags = TaskTags,
+                AllTags = AllTags,
+                Answers = Answers,
+                Pictures = Pictures
+            };
+
+            return View(editTaskModel);
+        }
+
+
+
+
+            public IActionResult SearchPage(string SearchText, int? Tag)
         {
             ViewData["SearchText"] = SearchText;
+            if(Tag != null)
+            {
+                ViewData["SearchText"] = db.Tags.Where(x=>x.Id == Tag).FirstOrDefault().TagName;
+                IQueryable<TasksModel> results = db.TaskTag.Where(x => x.Tag == Tag).Join(db.Tasks, f => f.TaskId, t => t.Id, (f, t) => new TasksModel() { Id = t.Id, TaskName = t.TaskName, Type = t.Type });
+                return View(results);
+            }    
             if (SearchText != null)
             {
                 IQueryable<TasksModel> results = db.Tasks.Where(x => EF.Functions.FreeText(x.TaskName, SearchText) || EF.Functions.FreeText(x.Condition, SearchText) || EF.Functions.FreeText(x.Type, SearchText));

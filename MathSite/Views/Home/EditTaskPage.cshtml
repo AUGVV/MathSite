@@ -1,0 +1,344 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    string alltags = "";
+    List<string> Answers = new List<string>();
+
+    @foreach (var item in Model.Answers)
+    {
+        Answers.Add(item.Answer);
+    }
+    if(Answers.Count < 3)
+    {
+        for(int i=0; i<3;i++ )
+        {
+            Answers.Add("");
+        }
+    }
+
+    @foreach (var item in Model.Tags)
+    {
+        alltags += $"#{item.TagName}";
+    }
+}
+<link rel="stylesheet" type="text/css" href="/css/Tags.css">
+<link rel="stylesheet" type="text/css" href="/css/EditTask.css">
+<link rel="stylesheet" type="text/css" href="/css/DragDrop.css">
+
+<p>
+    <input type="hidden" name="Tags" id="current-id" value="@ViewData["CurrentId"]" />
+
+
+    <div class="edit-block">
+        <b>Редактируемая задача:</b><br>
+        <b>ID:</b>&#160 @ViewData["CurrentId"]<br>
+        <br>
+    </div><br><br>
+
+    <div class="edit-block">
+        <b>Имя создавшего:</b><br>
+        @ViewData["CurrentUser"]<br>
+        <br>
+    </div><br><br>
+
+    <div class="edit-block">
+        <b>Название задачи:</b><br>
+        <span id="task-name-span">@ViewData["TaskName"]</span>
+        <br>
+        <b>Новое название:</b><br>
+        <input type="text" name="TaskName" required id="task-name" size="40"> <Button type="submit" id="change-name-button" class="game-button">Изменить</Button><br>
+        <br>
+    </div><br><br>
+
+    <div class="edit-block">
+        <b>Тип задачи:</b><br>
+        <span id="task-type-span">@ViewData["TaskType"]</span>
+        <br>
+        <b>Новый тип:</b><br>
+        <select name="type" asp-items="Model.SelectList" id="type" value="" class="form-control"></select> <br>
+        <Button type="submit" id="change-type-button" class="game-button">Изменить</Button><br>
+        <br>
+    </div><br><br>
+
+    <div class="edit-block">
+        <b>Условие задачи:</b><br>
+        <span id="task-condition-span">@ViewData["TaskCondition"]</span>
+        <br>
+        <b>Новое условие:</b><br>
+        <textarea wrap="hard" name="TaskCondition" id="task-condition" required cols="50" rows="10"></textarea><br>
+        <Button type="submit" id="change-condition-button" class="game-button">Изменить</Button><br>
+        <br>
+    </div><br><br>
+
+    <div class="edit-block">
+        <b>Текущие ответы:</b><br>
+        <b>Ответ 1:</b>&#160   <span id="task-answer-first-span">@Answers[0]</span><br><br>
+        <b>Ответ 2:</b>&#160   <span id="task-answer-second-span">@Answers[1]</span><br><br>
+        <b>Ответ 3:</b>&#160   <span id="task-answer-third-span">@Answers[2]</span><br><br>
+        <b>Новые ответы задачи:</b>&#160<br>(Если потребуется удалить просто удалите значения и нажмите изменить)<br>Первый ответ не должен быть пуст<br>
+        <b>Ответ 1:</b>&#160  <input type="text" name="TaskName" id="change-first-answer-button" size="40" value=""><br><br>
+        <b>Ответ 2:</b>&#160  <input type="text" name="TaskName" id="change-second-answer-button" size="40" value=""><br><br>
+        <b>Ответ 3:</b>&#160  <input type="text" name="TaskName" id="change-third-answer-button" size="40" value=""><br><br>
+        <Button type="submit" id="change-answer-button" class="game-button">Изменить</Button><br>
+        <br>
+    </div><br><br>
+
+              <div class="edit-block">
+                  <b>Теги:</b>
+                  (Кликните на тег для удаления)<br>
+                  <input type="hidden" name="Tags" id="hidden-tags-list" value="@alltags" /><br>
+                  <input list="tags-list" type="text" input id="tag-name" size="20">   <Button type="submit" id="add-tag" class="game-button">Добавить тег</Button>
+                  <datalist id="tags-list">
+                      @foreach (var item in Model.AllTags)
+                      {
+                          <option value="@item.TagName"></option>
+                      }
+                  </datalist><br>
+                  <div id="tags-container">
+                  </div><br>
+                  <Button type="submit" id="change-tags-button" class="game-button">Изменить</Button>  <span hidden style="color:forestgreen" id="task-tags-changed">Теги изменены</span><br>
+              </div><br><br>
+
+                        <div class="edit-block">
+                            <b>Изображения:</b><br>
+                            (Кликните на Изображениe для удаления)<br>
+
+                            <div id="images-container">
+                                @foreach (var item in Model.Pictures)
+                                {
+                                    <img onclick="RemovePicture(@item.Id)" id="pic-@item.Id" width="100" src="@item.Reference">
+                                }
+                            </div><br>
+                                  <div id="drop-area" class="my-form">
+                                      <input type="file" id="fileElem" multiple accept="image/*" onchange="handleFiles(this.files)">
+                                      <label class="button" for="fileElem">Выбрать изображения</label>  <label class="button" id="delete-elem">Удалить изображения</label>
+                                      <div id="gallery"></div>
+                                      <input type="hidden" name="images" id="images" />
+                                  </div>
+                            <span id="Avalible-pictures-span"></span><br>
+                            <Button type="submit" id="change-tags-button" class="game-button">Изменить</Button>
+
+                        </div><br><br>
+</p>
+
+
+<script src="/js/signalr/dist/browser/signalr.min.js"></script>
+<script>
+    const hubConnection = new signalR.HubConnectionBuilder().withUrl("/hubs").build();
+    var CurrentId = document.getElementById("current-id").value
+    var PictureAvalible = 3;
+
+    window.onload = function () {
+        let Tags = document.getElementById("hidden-tags-list").value.slice(1).split('#');
+        for (let item of Tags) {
+            if (item.length != 0)
+                AddSpan(item);
+        }
+        ReloadPicturesAvalible();
+    }
+
+    function ReloadPicturesAvalible() {
+        let LoadedPictures = document.getElementById('images-container').childElementCount;
+        console.log(LoadedPictures);
+        PictureAvalible = 3 - LoadedPictures;
+        document.getElementById('Avalible-pictures-span').innerHTML = PictureAvalible+"/3"
+    }
+
+    function RemovePicture(e) {
+        document.getElementById('pic-' + e).remove();
+        ReloadPicturesAvalible();
+    }
+
+    let Drop = document.getElementById('drop-area');
+    document.getElementById("delete-elem").addEventListener("click", function (e) {
+        document.getElementById("images").value = "";
+        RemoveOld();
+    });
+
+
+    ;['dragenter', 'dragover', 'dragleave', 'drop'].forEach(x => {
+        Drop.addEventListener(x, preventDefaults, false)
+    })
+
+        ;['dragenter', 'dragover'].forEach(x => {
+            Drop.addEventListener(x, highlight, false)
+        })
+
+        ;['dragleave', 'drop'].forEach(x => {
+            Drop.addEventListener(x, unhighlight, false)
+        })
+
+
+    function preventDefaults(e) {
+        e.preventDefault()
+        e.stopPropagation()
+    }
+
+
+    function highlight(e) {
+        Drop.classList.add('highlight')
+    }
+    function unhighlight(e) {
+        Drop.classList.remove('highlight')
+    }
+    Drop.addEventListener('drop', handleDrop, false)
+
+    function handleDrop(e) {
+        let files = e.dataTransfer.files
+        handleFiles(files)
+    }
+    function handleFiles(files) {
+        RemoveOld();
+        files = [...files].slice(0, PictureAvalible)
+        document.getElementById("images").value = "";
+    
+        files.forEach(PreviewFile)
+    }
+    function RemoveOld() {
+        let del = document.getElementById('gallery')
+        while (del.firstChild) {
+            del.removeChild(del.firstChild);
+        }
+    }
+
+    function LoadFile(file) {
+        let reader = new FileReader()
+        reader.readAsBinaryString(file)
+        reader.onloadend = function () {
+            var base64 = window.btoa(reader.result);
+            console.log(base64);
+            document.getElementById("images").value = document.getElementById("images").value + "|image|" + base64;
+        }
+    }
+
+    function PreviewFile(file) {
+        let reader = new FileReader()
+        reader.readAsDataURL(file)
+        reader.onloadend = function () {
+            let img = document.createElement('img')
+            img.src = reader.result
+            document.getElementById('gallery').appendChild(img)
+        }
+    }
+
+
+
+
+
+
+
+    document.getElementById("change-name-button").addEventListener("click", function (e) {
+        var NewName = document.getElementById("task-name").value
+
+        if (NewName == "") { alert('Имя не может быть пустым') }
+        else {
+            hubConnection.invoke('ChangeTaskName', CurrentId, NewName).catch(function (err) {
+                return console.error(err.toString());
+            });
+        }
+    });
+    hubConnection.start();
+
+    hubConnection.on('NameChanged', function (message) {
+        document.getElementById("task-name-span").innerHTML = message;
+    });
+
+    document.getElementById("change-type-button").addEventListener("click", function (e) {
+        var NewType = document.getElementById("type").value
+
+        hubConnection.invoke('ChangeTaskType', CurrentId, NewType).catch(function (err) {
+            return console.error(err.toString());
+        });
+    });
+    hubConnection.start();
+
+    hubConnection.on('TypeChanged', function (message) {
+        document.getElementById("task-type-span").innerHTML = message;
+    });
+
+    document.getElementById("change-condition-button").addEventListener("click", function (e) {
+        var NewCondition = document.getElementById("task-condition").value
+
+        if (NewCondition == "") { alert('Условие не может быть пустым') }
+        else {
+            hubConnection.invoke('ChangeTaskCondition', CurrentId, NewCondition).catch(function (err) {
+                return console.error(err.toString());
+            });
+        }
+    });
+    hubConnection.start();
+
+    hubConnection.on('ConditionChanged', function (message) {
+        document.getElementById("task-condition-span").innerHTML = message;
+    });
+
+    document.getElementById("change-answer-button").addEventListener("click", function (e) {
+        var FirstAnswer = document.getElementById("change-first-answer-button").value
+        var SecondAnswer = document.getElementById("change-second-answer-button").value
+        var ThirdAnswer = document.getElementById("change-third-answer-button").value
+
+        if (FirstAnswer == "") { alert('Первый ответ должен быть заполнен') }
+        else {
+            hubConnection.invoke('ChangeTaskAnswers', CurrentId, FirstAnswer, SecondAnswer, ThirdAnswer).catch(function (err) {
+                return console.error(err.toString());
+            });
+        }
+    });
+    hubConnection.start();
+
+    hubConnection.on('AnswersChanged', function (FirstAnswer, SecondAnswer, ThirdAnswer ) {
+        document.getElementById("task-answer-first-span").innerHTML = FirstAnswer;
+        document.getElementById("task-answer-second-span").innerHTML = SecondAnswer;     
+        document.getElementById("task-answer-third-span").innerHTML = ThirdAnswer;
+  
+    });
+
+
+    document.getElementById("change-tags-button").addEventListener("click", function (e) {
+        var NewTags = document.getElementById("hidden-tags-list").value
+
+        hubConnection.invoke('ChangeTaskTags', CurrentId, NewTags).catch(function (err) {
+            return console.error(err.toString());
+        });
+    });
+    hubConnection.start();
+
+    hubConnection.on('TagsChanged', function () {
+        document.getElementById("task-tags-changed").hidden = false;
+    });
+
+
+    document.getElementById("add-tag").addEventListener("click", function (e) {
+        document.getElementById("task-tags-changed").hidden = true;
+        var CurrentValue = document.getElementById("tag-name").value;
+        if (CurrentValue.length > 0) {
+            document.getElementById("tag-name").value = "";
+            AddSpan(CurrentValue);
+        }
+    });
+
+    function AddSpan(e) {
+        let span = document.createElement('span');
+        span.innerHTML = e;
+        span.classList.add("static-tag");
+        span.onclick = function () {
+            span.remove();
+            GenerateTagsStr();
+        }
+        document.getElementById('tags-container').appendChild(span);
+        GenerateTagsStr();
+    }
+
+    function GenerateTagsStr() {
+        document.getElementById("hidden-tags-list").value = "";
+        let nodes = document.getElementById('tags-container').childNodes;
+        for (let node of nodes) {
+            if (node.innerHTML != undefined) {
+                document.getElementById("hidden-tags-list").value += '#' + node.innerHTML;
+            }
+        }
+        document.getElementById("hidden-tags-list").value = document.getElementById("hidden-tags-list").value.slice(1);
+    }
+
+</script>

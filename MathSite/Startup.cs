@@ -36,17 +36,17 @@ namespace MathSite
             services.AddDatabaseDeveloperPageExceptionFilter();
             services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<ApplicationDbContext>();
             services.AddControllersWithViews();
-         //   services.AddAuthentication().AddFacebook(facebookOptions =>
-          //  {
-          //      facebookOptions.AppId = "";
-           //     facebookOptions.AppSecret = "";
-          //  });
-          //  services.AddAuthentication().AddTwitter(twitterOptions =>
-          //  {
-          //      twitterOptions.ConsumerKey = "";
-          //      twitterOptions.ConsumerSecret = "";
-          //      twitterOptions.RetrieveUserDetails = true;
-          //  });
+               services.AddAuthentication().AddFacebook(facebookOptions =>
+             {
+                 facebookOptions.AppId = "391460485966722";
+                 facebookOptions.AppSecret = "939f7b3c30451f7aacafd1eba36131b5";
+              });
+            //  services.AddAuthentication().AddTwitter(twitterOptions =>
+            //  {
+            //      twitterOptions.ConsumerKey = "";
+            //      twitterOptions.ConsumerSecret = "";
+            //      twitterOptions.RetrieveUserDetails = true;
+            //  });
 
 
         }

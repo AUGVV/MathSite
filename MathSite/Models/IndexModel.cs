@@ -9,5 +9,6 @@ namespace MathSite.Models
     {
        public IEnumerable<TasksModel> NewTasks { get; set; }
        public IEnumerable<TasksModel> TopTasks { get; set; }
+       public IEnumerable<TagsModel> Tags { get; set; }
     }
 }

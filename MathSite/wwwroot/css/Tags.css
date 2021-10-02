@@ -1,0 +1,32 @@
+﻿.tags {
+    display: inline-block;
+    width: 100%;
+    height: auto;
+    border-radius: 12px;
+    background: #e4e4e4;
+    padding: 5px;
+    cursor: pointer;
+    position: relative;
+}
+
+.tag-button {
+    background: #4b7aff;
+    border-radius: 15px;
+    border: 3px #666ae4;
+    color: #ffffff;
+    margin-right: 2px;
+    margin-left: 2px;
+    margin-top: 3px;
+    margin-bottom: 3px;
+}
+
+.static-tag {
+    background: #dedede;
+    border-radius: 9px;
+    color: #000000;
+    border: 2px solid #a0a0a0;
+    padding: 3px;
+    font-size: 12px;
+    margin-right: 2px;
+    margin-left: 2px;
+}

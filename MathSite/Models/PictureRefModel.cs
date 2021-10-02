@@ -13,5 +13,7 @@ namespace MathSite.Models
 
         public string Reference { get; set; }
 
+        public string DeleteReference { get; set; }
+
     }
 }

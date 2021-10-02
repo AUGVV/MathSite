@@ -32,7 +32,7 @@ namespace MathSite.Areas.Identity.Pages.Account.Manage
         {
             if (act == "ShowTask")
             {
-                return Redirect($"/Home/TaskSolve?id={ChoiseId}");
+                return Redirect($"/Home/TaskSolve?CurrentId={ChoiseId}");
             }
             ViewListCreate();
             return Page();

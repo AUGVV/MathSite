@@ -5,6 +5,7 @@
 
 }
 <link rel="stylesheet" type="text/css" href="/css/DragDrop.css">
+<link rel="stylesheet" type="text/css" href="/css/Tags.css">
 
 <p>
     <b>Ваше имя:</b><br>
@@ -18,7 +19,7 @@
     </p>
     <p>
         <b>Тип задачи:</b><br>
-        <select name="type" asp-items="Model" value="" class="form-control"></select>
+        <select name="type" asp-items="Model.TaskType" value="" class="form-control"></select>
     </p>
     <p>
         <b>Условие задачи:</b><Br>
@@ -40,8 +41,18 @@
     </p>
     <p>
         <b>Тэги:</b><br>
-        Вводите теги через пробел<br>
-        <input type="text" input name="Tags" id="tag-name" size="40">
+        Добавте теги<br>
+        <input type="hidden" name="Tags" id="hidden-tags-list" value=""/>
+        <input list="tags-list" type="text" input id="tag-name" size="20"> <label class="button" id="add-tage">Добавить тэг</label>
+        <datalist id="tags-list">
+            @foreach (var item in Model.Tags)
+            {
+                <option value="@item.TagName"></option>
+            }
+        </datalist>
+        <div id="tags-container">
+
+        </div>
     </p>
 
     <div id="drop-area" class="my-form">
@@ -54,6 +65,43 @@
 </form>
 
 <script>
+
+
+
+        document.getElementById("add-tage").addEventListener("click", function (e) {
+            var CurrentValue = document.getElementById("tag-name").value;
+            if (CurrentValue.length > 0) {
+                document.getElementById("tag-name").value = "";
+                console.log(CurrentValue);
+                let span = document.createElement('span');
+
+                span.innerHTML = CurrentValue;
+                span.classList.add("static-tag");
+                span.onclick = function () {
+                    span.remove();
+                    GenerateTagsStr();
+                }
+                document.getElementById('tags-container').appendChild(span);
+                GenerateTagsStr();
+            }
+ });
+
+        function GenerateTagsStr() {
+            document.getElementById("hidden-tags-list").value = "";
+            let nodes = document.getElementById('tags-container').childNodes;
+            for (let node of nodes) {
+                if (node.innerHTML != undefined) {
+                    document.getElementById("hidden-tags-list").value += '#' + node.innerHTML;
+                }
+            }
+            document.getElementById("hidden-tags-list").value = document.getElementById("hidden-tags-list").value.slice(1);
+        }
+
+
+
+
+
+
 
     let Drop = document.getElementById('drop-area');
 

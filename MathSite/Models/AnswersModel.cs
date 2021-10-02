@@ -13,8 +13,5 @@ namespace MathSite.Models
         public int TaskId { get; set; }
 
         public string Answer { get; set; }
-
-        public int Order { get; set; }
-
     }
 }
