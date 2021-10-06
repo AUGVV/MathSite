@@ -9,6 +9,5 @@ namespace MathSite.Models
     {
         public int Id { get; set; }
         public string Theme { get; set; }
-
     }
 }

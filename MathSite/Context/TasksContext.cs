@@ -13,8 +13,10 @@ namespace MathSite.Models
         public DbSet<TasksModel> Tasks { get; set; }
         public DbSet<PictureRefModel> PicturesRef { get; set; }
         public DbSet<TaskTagModel> TaskTag { get; set; }
+        public DbSet<CommentsStateModel> CommentsState { get; set; }
         public DbSet<TagsModel> Tags { get; set; }
         public DbSet<UserTaskModel> UserTaskState { get; set; }
+        public DbSet<UserConfigModel> UserConfig { get; set; }
         public DbSet<ThemesModel> MathTheme { get; set; }
         public TasksContext(DbContextOptions<TasksContext> options) : base(options)
         {

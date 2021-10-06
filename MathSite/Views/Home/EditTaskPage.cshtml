@@ -1,6 +1,5 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
 @{
     string alltags = "";
     List<string> Answers = new List<string>();
@@ -9,9 +8,9 @@
     {
         Answers.Add(item.Answer);
     }
-    if(Answers.Count < 3)
+    if (Answers.Count < 3)
     {
-        for(int i=0; i<3;i++ )
+        for (int i = 0; i < 3; i++)
         {
             Answers.Add("");
         }
@@ -21,6 +20,11 @@
     {
         alltags += $"#{item.TagName}";
     }
+
+  
+
+
+
 }
 <link rel="stylesheet" type="text/css" href="/css/Tags.css">
 <link rel="stylesheet" type="text/css" href="/css/EditTask.css">
@@ -31,95 +35,96 @@
 
 
     <div class="edit-block">
-        <b>Редактируемая задача:</b><br>
+        <b>@Localizer["EditedTask"]</b><br>
         <b>ID:</b>&#160 @ViewData["CurrentId"]<br>
         <br>
     </div><br><br>
 
     <div class="edit-block">
-        <b>Имя создавшего:</b><br>
+        <b>@Localizer["CreatorName"]</b><br>
         @ViewData["CurrentUser"]<br>
         <br>
     </div><br><br>
 
     <div class="edit-block">
-        <b>Название задачи:</b><br>
+        <b>@Localizer["TaskName"]</b><br>
         <span id="task-name-span">@ViewData["TaskName"]</span>
         <br>
-        <b>Новое название:</b><br>
-        <input type="text" name="TaskName" required id="task-name" size="40"> <Button type="submit" id="change-name-button" class="game-button">Изменить</Button><br>
+        <b>@Localizer["NewTaskName"]</b><br>
+        <input type="text" name="TaskName" required id="task-name" size="40"> <Button type="submit" id="change-name-button" class="game-button">@Localizer["Change"]</Button><br>
         <br>
     </div><br><br>
 
     <div class="edit-block">
-        <b>Тип задачи:</b><br>
+        <b>@Localizer["TaskType"]</b><br>
         <span id="task-type-span">@ViewData["TaskType"]</span>
         <br>
-        <b>Новый тип:</b><br>
+        <b>@Localizer["NewTaskType"]</b><br>
         <select name="type" asp-items="Model.SelectList" id="type" value="" class="form-control"></select> <br>
-        <Button type="submit" id="change-type-button" class="game-button">Изменить</Button><br>
+         <Button type="submit" id="change-type-button" class="game-button">@Localizer["Change"]</Button><br>
         <br>
     </div><br><br>
 
     <div class="edit-block">
-        <b>Условие задачи:</b><br>
+        <b>@Localizer["TaskCondition"]</b><br>
         <span id="task-condition-span">@ViewData["TaskCondition"]</span>
         <br>
-        <b>Новое условие:</b><br>
+        <b>@Localizer["NewTaskCondition"]</b><br>
         <textarea wrap="hard" name="TaskCondition" id="task-condition" required cols="50" rows="10"></textarea><br>
-        <Button type="submit" id="change-condition-button" class="game-button">Изменить</Button><br>
-        <br>
-    </div><br><br>
-
-    <div class="edit-block">
-        <b>Текущие ответы:</b><br>
-        <b>Ответ 1:</b>&#160   <span id="task-answer-first-span">@Answers[0]</span><br><br>
-        <b>Ответ 2:</b>&#160   <span id="task-answer-second-span">@Answers[1]</span><br><br>
-        <b>Ответ 3:</b>&#160   <span id="task-answer-third-span">@Answers[2]</span><br><br>
-        <b>Новые ответы задачи:</b>&#160<br>(Если потребуется удалить просто удалите значения и нажмите изменить)<br>Первый ответ не должен быть пуст<br>
-        <b>Ответ 1:</b>&#160  <input type="text" name="TaskName" id="change-first-answer-button" size="40" value=""><br><br>
-        <b>Ответ 2:</b>&#160  <input type="text" name="TaskName" id="change-second-answer-button" size="40" value=""><br><br>
-        <b>Ответ 3:</b>&#160  <input type="text" name="TaskName" id="change-third-answer-button" size="40" value=""><br><br>
-        <Button type="submit" id="change-answer-button" class="game-button">Изменить</Button><br>
+        <Button type="submit" id="change-condition-button" class="game-button">@Localizer["Change"]</Button><br>
         <br>
     </div><br><br>
 
               <div class="edit-block">
-                  <b>Теги:</b>
-                  (Кликните на тег для удаления)<br>
-                  <input type="hidden" name="Tags" id="hidden-tags-list" value="@alltags" /><br>
-                  <input list="tags-list" type="text" input id="tag-name" size="20">   <Button type="submit" id="add-tag" class="game-button">Добавить тег</Button>
-                  <datalist id="tags-list">
-                      @foreach (var item in Model.AllTags)
-                      {
-                          <option value="@item.TagName"></option>
-                      }
-                  </datalist><br>
-                  <div id="tags-container">
-                  </div><br>
-                  <Button type="submit" id="change-tags-button" class="game-button">Изменить</Button>  <span hidden style="color:forestgreen" id="task-tags-changed">Теги изменены</span><br>
+                  <b>@Localizer["CurrentAnswers"]</b><br>
+                  <b>@Localizer["Answer1"]</b>&#160   <span id="task-answer-first-span">@Answers[0]</span><br><br>
+                  <b>@Localizer["Answer2"]</b>&#160   <span id="task-answer-second-span">@Answers[1]</span><br><br>
+                  <b>@Localizer["Answer3"]</b>&#160   <span id="task-answer-third-span">@Answers[2]</span><br><br>
+                  <b>@Localizer["NewAnswers"]</b>&#160<br>@Localizer["AnswersHelp1"]<br>@Localizer["AnswersHelp2"]<br>
+                  <b>@Localizer["Answer1"]</b>&#160  <input type="text" name="TaskName" id="change-first-answer-button" size="40" value=""><br><br>
+                  <b>@Localizer["Answer2"]</b>&#160  <input type="text" name="TaskName" id="change-second-answer-button" size="40" value=""><br><br>
+                  <b>@Localizer["Answer3"]</b>&#160  <input type="text" name="TaskName" id="change-third-answer-button" size="40" value=""><br><br>
+                  <Button type="submit" id="change-answer-button" class="game-button">@Localizer["Change"]</Button><br>
+                  <br>
               </div><br><br>
-
                         <div class="edit-block">
-                            <b>Изображения:</b><br>
-                            (Кликните на Изображениe для удаления)<br>
-
-                            <div id="images-container">
-                                @foreach (var item in Model.Pictures)
+                            <b>@Localizer["Tags"]</b>
+                            @Localizer["TagsHelp"]<br>
+                            <input type="hidden" name="Tags" id="hidden-tags-list" value="@alltags" /><br>
+                            <input list="tags-list" type="text" input id="tag-name" size="20">   <Button type="submit" id="add-tag" class="game-button">@Localizer["AddTag"]</Button><br>
+                            <datalist id="tags-list">
+                                @foreach (var item in Model.AllTags)
                                 {
-                                    <img onclick="RemovePicture(@item.Id)" id="pic-@item.Id" width="100" src="@item.Reference">
+                                    <option value="@item.TagName"></option>
                                 }
+                            </datalist><br>
+                            <div id="tags-container">
                             </div><br>
-                                  <div id="drop-area" class="my-form">
-                                      <input type="file" id="fileElem" multiple accept="image/*" onchange="handleFiles(this.files)">
-                                      <label class="button" for="fileElem">Выбрать изображения</label>  <label class="button" id="delete-elem">Удалить изображения</label>
-                                      <div id="gallery"></div>
-                                      <input type="hidden" name="images" id="images" />
-                                  </div>
-                            <span id="Avalible-pictures-span"></span><br>
-                            <Button type="submit" id="change-tags-button" class="game-button">Изменить</Button>
-
+                                  <Button type="submit" id="change-tags-button" class="game-button">@Localizer["Change"]</Button>  <span hidden style="color:forestgreen" id="task-tags-changed">@Localizer["TagsChanged"]</span><br>
                         </div><br><br>
+
+                                  <div class="edit-block">
+                                      <input type="hidden" name="images" id="images" />
+                                      <input type="hidden" name="delete-images-id" id="delete-images-id" />
+                                      <b>@Localizer["Pictures"]</b><br>
+                                     @Localizer["PicturesHelp"]<br>
+
+                                      <div id="images-container">
+                                          @foreach (var item in Model.Pictures)
+                                          {
+                                              <img onclick="RemovePicture(@item.Id)" id="pic-@item.Id" width="100" src="@item.Reference">
+                                          }
+                                      </div><br>
+                                      <div id="drop-area" class="my-form">
+                                          <input type="file" id="fileElem" multiple accept="image/*" onchange="handleFiles(this.files)">
+                                          <label class="button" for="fileElem">@Localizer["ChoisePic"]</label>  <label class="button" id="delete-elem">@Localizer["DeletePic"]</label>
+                                          <div id="gallery"></div>
+
+                                      </div>
+                                      <span id="Avalible-pictures-span"></span><br>
+                                      <Button type="submit" id="change-pictures-button" class="game-button">@Localizer["Change"]</Button>
+
+                                  </div><br><br>
 </p>
 
 
@@ -142,10 +147,11 @@
         let LoadedPictures = document.getElementById('images-container').childElementCount;
         console.log(LoadedPictures);
         PictureAvalible = 3 - LoadedPictures;
-        document.getElementById('Avalible-pictures-span').innerHTML = PictureAvalible+"/3"
+        document.getElementById('Avalible-pictures-span').innerHTML = PictureAvalible + "/3"
     }
 
     function RemovePicture(e) {
+        document.getElementById("delete-images-id").value += '#' + e
         document.getElementById('pic-' + e).remove();
         ReloadPicturesAvalible();
     }
@@ -192,9 +198,10 @@
         RemoveOld();
         files = [...files].slice(0, PictureAvalible)
         document.getElementById("images").value = "";
-    
+        files.forEach(LoadFile)
         files.forEach(PreviewFile)
     }
+
     function RemoveOld() {
         let del = document.getElementById('gallery')
         while (del.firstChild) {
@@ -222,16 +229,25 @@
         }
     }
 
+    document.getElementById("change-pictures-button").addEventListener("click", function (e) {
+        var NewPictures = document.getElementById("images").value
+        var PicturesForDelete = document.getElementById("delete-images-id").value.slice(1)
 
+        hubConnection.invoke('ChangePictures', CurrentId, NewPictures, PicturesForDelete).catch(function (err) {
+            return console.error(err.toString());
+        });
+    });
+    hubConnection.start();
 
-
-
+    hubConnection.on('PictureChanged', function (message) {
+        location.reload();
+    });
 
 
     document.getElementById("change-name-button").addEventListener("click", function (e) {
         var NewName = document.getElementById("task-name").value
 
-        if (NewName == "") { alert('Имя не может быть пустым') }
+        if (NewName == "") { alert('The name cannot be empty') }
         else {
             hubConnection.invoke('ChangeTaskName', CurrentId, NewName).catch(function (err) {
                 return console.error(err.toString());
@@ -260,7 +276,7 @@
     document.getElementById("change-condition-button").addEventListener("click", function (e) {
         var NewCondition = document.getElementById("task-condition").value
 
-        if (NewCondition == "") { alert('Условие не может быть пустым') }
+        if (NewCondition == "") { alert('Condition cannot be empty') }
         else {
             hubConnection.invoke('ChangeTaskCondition', CurrentId, NewCondition).catch(function (err) {
                 return console.error(err.toString());
@@ -278,7 +294,7 @@
         var SecondAnswer = document.getElementById("change-second-answer-button").value
         var ThirdAnswer = document.getElementById("change-third-answer-button").value
 
-        if (FirstAnswer == "") { alert('Первый ответ должен быть заполнен') }
+        if (FirstAnswer == "") { alert('The first answer must be completed') }
         else {
             hubConnection.invoke('ChangeTaskAnswers', CurrentId, FirstAnswer, SecondAnswer, ThirdAnswer).catch(function (err) {
                 return console.error(err.toString());
@@ -287,11 +303,11 @@
     });
     hubConnection.start();
 
-    hubConnection.on('AnswersChanged', function (FirstAnswer, SecondAnswer, ThirdAnswer ) {
+    hubConnection.on('AnswersChanged', function (FirstAnswer, SecondAnswer, ThirdAnswer) {
         document.getElementById("task-answer-first-span").innerHTML = FirstAnswer;
-        document.getElementById("task-answer-second-span").innerHTML = SecondAnswer;     
+        document.getElementById("task-answer-second-span").innerHTML = SecondAnswer;
         document.getElementById("task-answer-third-span").innerHTML = ThirdAnswer;
-  
+
     });
 
 

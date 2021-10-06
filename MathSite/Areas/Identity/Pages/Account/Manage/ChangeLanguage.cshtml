@@ -2,3 +2,22 @@
 @model MathSite.Areas.Identity.Pages.Account.Manage.ChangeLanguageModel
 @{
 }
+
+<b>Текущий язык:</b>
+<br>
+Русский
+<br>
+<b>Изменить язык:</b>
+<br>
+
+<form method="post">
+    <select name="language">
+        <option disabled>Выберите язык</option>
+        <option value="ru">Русский</option>
+        <option value="en">English</option>
+    </select>
+    <input type="submit" value="Изменить">
+</form>
+<br>
+
+

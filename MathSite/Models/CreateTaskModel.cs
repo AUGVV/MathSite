@@ -9,8 +9,6 @@ namespace MathSite.Models
     public class CreateTaskModel
     {
         public SelectList TaskType { get; set; }
-
         public IQueryable<TagsModel> Tags { get; set; }
-
     }
 }

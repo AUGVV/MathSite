@@ -1,9 +1,9 @@
 ﻿#drop-area {
     border: 2px dashed #ccc;
     border-radius: 20px;
-    width: 70%;
+    width: auto 0%;
     font-family: sans-serif;
-    margin: 100px auto;
+    margin: 10px auto;
     padding: 20px;
 }
 

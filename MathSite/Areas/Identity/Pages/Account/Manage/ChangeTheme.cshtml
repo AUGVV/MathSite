@@ -4,17 +4,33 @@
 }
 <link rel="stylesheet" type="text/css" href="/css/SwitchButtons.css">
 
-<b>Ночной режим</b><br><br>
-Вкл<div id="button" class="switch-btn"></div>выкл
+<b>Ночной режим</b>
+<br>
+<br>
+<div id="button" class="switch-btn"></div>
 
+
+
+
+<script src="/js/signalr/dist/browser/signalr.min.js"></script>
 <script>
+    const hubConnection = new signalR.HubConnectionBuilder().withUrl("/hubs").build();
+
     document.getElementById("button").addEventListener("click", function (e) {
         if (document.getElementById("button").classList.contains('switch-on') == false) {
             document.getElementById("button").classList.add("switch-on");
+            hubConnection.invoke('NightMode', true).catch(function (err) {
+                return console.error(err.toString());
+            });
         }
         else if (document.getElementById("button").classList.contains('switch-on') == true) {
+
             document.getElementById("button").classList.remove("switch-on");
+            hubConnection.invoke('NightMode', false).catch(function (err) {
+                return console.error(err.toString());
+            });
         }
     });
+    hubConnection.start();
 </script>
 

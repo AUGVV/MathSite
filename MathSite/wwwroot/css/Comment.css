@@ -1,0 +1,27 @@
+﻿.comment {
+    display: inline-block;
+    width: 100%;
+    height: auto;
+    border-radius: 12px;
+    background: #f7f7f7;
+    padding: 5px;
+    position: relative;
+    margin-bottom: 12px
+}
+
+.who {
+    font-size: 16px;
+    color: #5600ff;
+}
+
+.like {
+    font-size: 16px;
+    color: #288800;
+    margin-left: 10px
+}
+
+.dislike {
+    font-size: 16px;
+    color: #a70000;
+    margin-left: 10px
+}

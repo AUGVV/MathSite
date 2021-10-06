@@ -11,6 +11,8 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Localization;
+using MathSite.Models;
 
 namespace MathSite.Areas.Identity.Pages.Account
 {
@@ -20,14 +22,18 @@ namespace MathSite.Areas.Identity.Pages.Account
         private readonly UserManager<IdentityUser> _userManager;
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly ILogger<LoginModel> _logger;
+        private TasksContext db;
+
 
         public LoginModel(SignInManager<IdentityUser> signInManager, 
             ILogger<LoginModel> logger,
+            TasksContext context,
             UserManager<IdentityUser> userManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _logger = logger;
+            db = context;
         }
 
         [BindProperty]
@@ -85,6 +91,8 @@ namespace MathSite.Areas.Identity.Pages.Account
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User logged in.");
+                    string region = db.UserConfig.Where(x => x.User == Input.Email).FirstOrDefault().Region;
+                    Response.Cookies.Append(CookieRequestCultureProvider.DefaultCookieName, CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(region)));
                     return LocalRedirect(returnUrl);
                 }
                 if (result.RequiresTwoFactor)

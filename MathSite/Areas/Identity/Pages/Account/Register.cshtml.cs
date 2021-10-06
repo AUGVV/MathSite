@@ -5,6 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
+using MathSite.Functions;
+using MathSite.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -23,17 +25,22 @@ namespace MathSite.Areas.Identity.Pages.Account
         private readonly UserManager<IdentityUser> _userManager;
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
+        private TasksContext db;
 
         public RegisterModel(
             UserManager<IdentityUser> userManager,
             SignInManager<IdentityUser> signInManager,
             ILogger<RegisterModel> logger,
+            TasksContext context,
             IEmailSender emailSender)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _logger = logger;
             _emailSender = emailSender;
+            db = context;
+
+
         }
 
         [BindProperty]
@@ -92,12 +99,11 @@ namespace MathSite.Areas.Identity.Pages.Account
 
                     code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(code));
                     await _userManager.ConfirmEmailAsync(user, code);
-
-          
-
+     
                     if (_userManager.Options.SignIn.RequireConfirmedAccount)
                     {
-                        return RedirectToPage("/Identity/Account/Login", new { email = Input.Email, returnUrl = returnUrl });
+                        CreateUserConfig CreateUserConfig = new CreateUserConfig(user.Email, db);
+                        return RedirectToPage("./Login", new { email = Input.Email, returnUrl = returnUrl });
                     }
                     else
                     {

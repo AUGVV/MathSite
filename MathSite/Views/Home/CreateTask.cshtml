@@ -1,6 +1,5 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
 @{
 
 }
@@ -8,42 +7,42 @@
 <link rel="stylesheet" type="text/css" href="/css/Tags.css">
 
 <p>
-    <b>Ваше имя:</b><br>
+    <b>@Localizer["YourName"]</b><br>
     <b>@ViewData["CurrentUser"] </b><br>
 </p>
 <form method="post">
     <input type="hidden" name="images" id="images" />
     <p>
-        <b>Название вашей задачи:</b><br>
+        <b>@Localizer["TaskName"]</b><br>
         <input type="text" name="TaskName" required id="task-name" size="40">
     </p>
     <p>
-        <b>Тип задачи:</b><br>
+        <b>@Localizer["TaskType"]</b><br>
         <select name="type" asp-items="Model.TaskType" value="" class="form-control"></select>
     </p>
     <p>
-        <b>Условие задачи:</b><Br>
+        <b>@Localizer["TaskCondition"]</b><Br>
         <textarea wrap="hard" name="TaskCondition" id="task-condition" required cols="120" rows="20"></textarea>
     </p>
     <p>
 
-        <b>Ответ:</b><br>
-        Если ответ всего один введите значение только в одно поле<br>
+        <b>@Localizer["Answer"]</b><br>
+        @Localizer["AnswerHelp"]<br>
         <div>
-            <b>Ответ №1: </b><input name="FirstAnswer" required type="text" id="first-answer" size="40"><br><br>
+            <b>@Localizer["Answer1"] </b><input name="FirstAnswer" required type="text" id="first-answer" size="40"><br><br>
         </div>
         <div id="second-hiden" hidden>
-            <b>Ответ №2: </b><input name="SecondAnswer" type="text" id="second-answer" size="40"><br><br>
+            <b>@Localizer["Answer2"] </b><input name="SecondAnswer" type="text" id="second-answer" size="40"><br><br>
         </div>
         <div id="third-hiden" hidden>
-            <b>Ответ №3: </b><input name="ThirdAnswer" type="text" id="third-answer" size="40">
+            <b>@Localizer["Answer3"] </b><input name="ThirdAnswer" type="text" id="third-answer" size="40">
         </div>
     </p>
     <p>
-        <b>Тэги:</b><br>
-        Добавте теги<br>
-        <input type="hidden" name="Tags" id="hidden-tags-list" value=""/>
-        <input list="tags-list" type="text" input id="tag-name" size="20"> <label class="button" id="add-tage">Добавить тэг</label>
+        <b>@Localizer["Tag"]</b><br>
+        @Localizer["AddTags"]<br>
+        <input type="hidden" name="Tags" id="hidden-tags-list" value="" />
+        <input list="tags-list" type="text" input id="tag-name" size="20"> <label class="button" id="add-tage">@Localizer["ButtonTag"]</label>
         <datalist id="tags-list">
             @foreach (var item in Model.Tags)
             {
@@ -56,46 +55,46 @@
     </p>
 
     <div id="drop-area" class="my-form">
-        <p>Загрузите не более 3х изображений, если это необходимо</p>
+        <p>@Localizer["LoadPictures"]</p>
         <input type="file" id="fileElem" multiple accept="image/*" onchange="handleFiles(this.files)">
-        <label class="button" for="fileElem">Выбрать изображения</label>  <label class="button" id="delete-elem">Удалить изображения</label>
+        <label class="button" for="fileElem">@Localizer["ButtonChoisePic"]</label>  <label class="button" id="delete-elem">@Localizer["ButtonDeletePic"]</label>
         <div id="gallery"></div>
     </div>
-    <button id="create-task" asp-route-Act="create" type="submit" class="btn btn-primary">Создать</button>
+    <button id="create-task" asp-route-Act="create" type="submit" class="btn btn-primary">@Localizer["Create"]</button>
 </form>
 
 <script>
 
 
 
-        document.getElementById("add-tage").addEventListener("click", function (e) {
-            var CurrentValue = document.getElementById("tag-name").value;
-            if (CurrentValue.length > 0) {
-                document.getElementById("tag-name").value = "";
-                console.log(CurrentValue);
-                let span = document.createElement('span');
+    document.getElementById("add-tage").addEventListener("click", function (e) {
+        var CurrentValue = document.getElementById("tag-name").value;
+        if (CurrentValue.length > 0) {
+            document.getElementById("tag-name").value = "";
+            console.log(CurrentValue);
+            let span = document.createElement('span');
 
-                span.innerHTML = CurrentValue;
-                span.classList.add("static-tag");
-                span.onclick = function () {
-                    span.remove();
-                    GenerateTagsStr();
-                }
-                document.getElementById('tags-container').appendChild(span);
+            span.innerHTML = CurrentValue;
+            span.classList.add("static-tag");
+            span.onclick = function () {
+                span.remove();
                 GenerateTagsStr();
             }
- });
-
-        function GenerateTagsStr() {
-            document.getElementById("hidden-tags-list").value = "";
-            let nodes = document.getElementById('tags-container').childNodes;
-            for (let node of nodes) {
-                if (node.innerHTML != undefined) {
-                    document.getElementById("hidden-tags-list").value += '#' + node.innerHTML;
-                }
-            }
-            document.getElementById("hidden-tags-list").value = document.getElementById("hidden-tags-list").value.slice(1);
+            document.getElementById('tags-container').appendChild(span);
+            GenerateTagsStr();
         }
+    });
+
+    function GenerateTagsStr() {
+        document.getElementById("hidden-tags-list").value = "";
+        let nodes = document.getElementById('tags-container').childNodes;
+        for (let node of nodes) {
+            if (node.innerHTML != undefined) {
+                document.getElementById("hidden-tags-list").value += '#' + node.innerHTML;
+            }
+        }
+        document.getElementById("hidden-tags-list").value = document.getElementById("hidden-tags-list").value.slice(1);
+    }
 
 
 
@@ -111,17 +110,17 @@
     });
 
 
-   ;['dragenter', 'dragover', 'dragleave', 'drop'].forEach(x => {
-            Drop.addEventListener(x, preventDefaults, false)
-   })
+    ;['dragenter', 'dragover', 'dragleave', 'drop'].forEach(x => {
+        Drop.addEventListener(x, preventDefaults, false)
+    })
 
-   ;['dragenter', 'dragover'].forEach(x => {
+        ;['dragenter', 'dragover'].forEach(x => {
             Drop.addEventListener(x, highlight, false)
-   })
+        })
 
-   ;['dragleave', 'drop'].forEach(x => {
+        ;['dragleave', 'drop'].forEach(x => {
             Drop.addEventListener(x, unhighlight, false)
-   })
+        })
 
 
     function preventDefaults(e) {
@@ -143,7 +142,7 @@
         handleFiles(files)
     }
     function handleFiles(files) {
-            RemoveOld();
+        RemoveOld();
         files = [...files].slice(0, 3)
         document.getElementById("images").value = "";
         files.forEach(LoadFile)
@@ -153,27 +152,27 @@
         let del = document.getElementById('gallery')
         while (del.firstChild) {
             del.removeChild(del.firstChild);
-        }   
+        }
     }
 
-        function LoadFile(file) {
-            let reader = new FileReader()
-            reader.readAsBinaryString(file)    
-            reader.onloadend = function () { 
-                var base64 = window.btoa(reader.result);
-                console.log(base64);
-                document.getElementById("images").value = document.getElementById("images").value + "|image|" + base64;
-            }
-        }
-
-        function PreviewFile(file) {
+    function LoadFile(file) {
         let reader = new FileReader()
-        reader.readAsDataURL(file)      
+        reader.readAsBinaryString(file)
+        reader.onloadend = function () {
+            var base64 = window.btoa(reader.result);
+            console.log(base64);
+            document.getElementById("images").value = document.getElementById("images").value + "|image|" + base64;
+        }
+    }
+
+    function PreviewFile(file) {
+        let reader = new FileReader()
+        reader.readAsDataURL(file)
         reader.onloadend = function () {
             let img = document.createElement('img')
             img.src = reader.result
             document.getElementById('gallery').appendChild(img)
-         }
+        }
     }
 
     document.getElementById("first-answer").addEventListener("keydown", function (e) {

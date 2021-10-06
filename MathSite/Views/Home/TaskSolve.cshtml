@@ -1,6 +1,5 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
 @{
     int count = 1;
 }
@@ -8,13 +7,14 @@
 <link rel="stylesheet" type="text/css" href="/css/Raiting.css">
 <link rel="stylesheet" type="text/css" href="/css/FindBar.css">
 <link rel="stylesheet" type="text/css" href="/css/Tags.css">
+<link rel="stylesheet" type="text/css" href="/css/Comment.css">
 
 <input type="hidden" id="taskid" name="CurrentId" value="@ViewData["Id"]" />
 <input type="hidden" id="username" value="@ViewData["UserName"]" />
 
-<div class="d1">
+<div class="search-bar">
     <form>
-        <input type="text" name="SearchText" placeholder="Искать здесь...">
+        <input type="text" name="SearchText" placeholder="@Localizer["Search"]">
         <input type="hidden" name="CurrentId" value="@ViewData["Id"]">
         <button type="submit"></button>
     </form>
@@ -26,16 +26,17 @@
 </div>
 
 <div class="text-center">
-    <b>Тип задачи:</b>
+    <b>@Localizer["TaskType"]</b>
     @ViewData["TaskType"]<br>
-</div><br>
+</div>
+<br>
 
 <div class="text-center">
     @foreach (var item in Model.Tags)
     {
-       <span class="static-tag">#@item.TagName</span> 
+        <span class="static-tag">#@item.TagName</span>
     }
-    </div>
+</div>
 <br>
 
 @if ((int)ViewData["PicturesCount"]! > 0)
@@ -66,37 +67,37 @@
 }
 
 <div class="text-center">
-    <b>Условие:</b><br>
+    <b>@Localizer["Condition"]</b><br>
     @ViewData["CurrentCondition"]<br><br>
 </div>
 
 @if ((bool)ViewData["IsAutorize"] == true)
 {
     <div class="text-center">
-        <b>Введите ответ:</b><br>
+        <b>@Localizer["TypeAnswer"]</b><br>
         <input type="text" name="Answer" id="currentanswer" class="input-bars"><br><br>
         <div hidden id="answer-not-correct">
-            <b style="color:#FF0800">Ответ не верен</b><br><br>
+            <b class="alert alert-danger">@Localizer["BadAnswer"]</b><br><br>
         </div>
         <div hidden id="answer-correct">
-            <b style="color:#0CFF00">Ответ верен!</b><br><br>
+            <b class="alert alert-success">@Localizer["GoodAnswer"]</b><br><br>
         </div>
-        <button id="toanswer" type="submit" class="btn btn-primary">Ответить</button><br><br>
+        <button id="toanswer" type="submit" class="btn btn-primary">@Localizer["ToAnswer"]</button><br><br>
     </div>
 
     @if ((bool)ViewData["IsVoted"] == false)
     {
         <div class="rating-area" id="raitings-active">
             <input type="radio" id="star-5" name="rating" value="5" onclick="Rating(5)">
-            <label for="star-5" title="Оценка «5»"></label>
+            <label for="star-5"></label>
             <input type="radio" id="star-4" name="rating" value="4" onclick="Rating(4)">
-            <label for="star-4" title="Оценка «4»"></label>
+            <label for="star-4"></label>
             <input type="radio" id="star-3" name="rating" value="3" onclick="Rating(3)">
-            <label for="star-3" title="Оценка «3»"></label>
+            <label for="star-3"></label>
             <input type="radio" id="star-2" name="rating" value="2" onclick="Rating(2)">
-            <label for="star-2" title="Оценка «2»"></label>
+            <label for="star-2" ></label>
             <input type="radio" id="star-1" name="rating" value="1" onclick="Rating(1)">
-            <label for="star-1" title="Оценка «1»"></label>
+            <label for="star-1" ></label>
         </div>
 
         <div class="rating-result" id="raitings-new" hidden></div>
@@ -115,11 +116,54 @@
         </div>
     }
 
-    <b>Комментарии:</b>
+
+
+    <template id="CommentTemplate">
+        <div class="comment">
+            <div id="who" class="who">
+
+            </div>
+            <span id="text">
+
+            </span>
+            <br>
+            <div class="likes-bar" id="likes-body">
+                <button id="like" class="like">@Localizer["Like"]</button>
+                <span class="like like-temp" id="like-temp">0</span>
+                <button id="dislike" class="dislike">@Localizer["Dislike"]</button>
+                <span class="dislike dislike-temp" id="dislike-temp">0</span>
+            </div>
+        </div>
+    </template>
+
+
+    <b>@Localizer["Comment"]</b>
     <br>
     <textarea wrap="hard" placeholder="as you say" cols="120" rows="5" style="resize:none;" id="comment"></textarea>
     <br>
-    <button id="say-to-task" type="submit" class="btn btn-primary">Отправить</button>
+    <button id="say-to-task" type="submit" class="btn btn-primary">@Localizer["Send"]</button>
+    <br>
+    <br>
+    <div class="comment-container" id="comment-body">
+        @foreach (var item in Model.Comments)
+        {
+            <div class="comment">
+                <div class="who">
+                    @item.Author
+                </div>
+                <span>
+                    @item.Text
+                </span>
+                <br>
+                <div class="likes-bar">
+                    <button class="like" onclick="DisLike('like', @item.Id)">@Localizer["Like"]</button>
+                    <span class="like" id="like-@item.Id" value="@item.Id">@item.Like</span>
+                    <button class="dislike" onclick="DisLike('dislike', @item.Id)">@Localizer["Dislike"]</button>
+                    <span class="dislike" id="dislike-@item.Id" value="@item.Id">@item.Dislike </span>
+                </div>
+            </div>
+        }
+    </div>
 }
 
 <script src="/js/signalr/dist/browser/signalr.min.js"></script>
@@ -135,7 +179,7 @@
         var Answer = document.getElementById("currentanswer").value;
         var UserName = document.getElementById("username").value;
 
-        if (Answer == null) { alert('Введите ваш ответ') }
+        if (Answer == "") { alert('Введите ваш ответ') }
         else {
             hubConnection.invoke('QuestionAnswer', CurrentId, Answer, UserName).catch(function (err) {
                 return console.error(err.toString());
@@ -149,7 +193,7 @@
         var WhatSay = document.getElementById("comment").value;
         var UserName = document.getElementById("username").value;
 
-        if (WhatSay == null) { alert('Комментарий не должен быть пустыми') }
+        if (WhatSay == "") { alert('Комментарий не должен быть пустыми') }
         else {
             hubConnection.invoke('AddToComment', CurrentId, WhatSay, UserName).catch(function (err) {
                 return console.error(err.toString());
@@ -158,8 +202,41 @@
     });
     hubConnection.start();
 
-    hubConnection.on('CommentDo', function (message) {
+    function DisLike(state, id) {
+        console.log(state);
+        var UserName = document.getElementById("username").value;
 
+        console.log(state);
+        console.log(id);
+        hubConnection.invoke('DisLikeComment', id, UserName, state).catch(function (err) {
+            return console.error(err.toString());
+        });
+    }
+
+    hubConnection.on('CommentLiked', function (CommentId, NewLikeCount, DisOrLike) {
+
+        if (DisOrLike == "like") {
+            document.getElementById("like-" + CommentId).innerHTML = NewLikeCount;
+        }
+        else if (DisOrLike == "dislike") {
+            document.getElementById("dislike-" + CommentId).innerHTML = NewLikeCount;
+        }
+    });
+
+
+
+    hubConnection.on('CommentsDo', function (TaskId, CommentId, Author, Text) {
+        if (TaskId == document.getElementById("taskid").value) {
+
+            var Comment = CommentTemplate.content.cloneNode(true);
+            Comment.getElementById('who').innerHTML = Author
+            Comment.getElementById('text').innerHTML = Text
+            Comment.getElementById('like').addEventListener("click", function () { DisLike("like", CommentId) } )
+            Comment.getElementById('dislike').addEventListener("click", function () { DisLike("dislike", CommentId) })
+            Comment.getElementById('like-temp').id = 'like-' + CommentId;
+            Comment.getElementById('dislike-temp').id = "dislike-" + CommentId;
+            var CommentTemp = document.getElementById('comment-body').appendChild(Comment);
+        }
     });
 
 

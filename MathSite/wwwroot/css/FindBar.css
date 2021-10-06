@@ -1,9 +1,10 @@
-﻿.d1 {
+﻿.search-bar {
     background: #9a9a9a;
     width: 93%;
     border-radius: 10px;
 }
-    .d1 input {
+
+    .search-bar input {
         width: 100%;
         height: 42px;
         padding-left: 10px;
@@ -13,19 +14,19 @@
         background: #ffffff;
     }
 
-    .d1 button {
+    .search-bar button {
         position: absolute;
         width: 42px;
         height: 42px;
         border: 2px solid #444444;
-        background: #c3c3c3;
+        background: #eaeaea;
         border-radius: 10px;
         cursor: pointer;
     }
 
-        .d1 button:before {
+        .search-bar button:before {
             content: "🔍";
             font-family: FontAwesome;
-            font-size: 16px;
+            font-size: 14px;
             color: #F9F0DA;
         }

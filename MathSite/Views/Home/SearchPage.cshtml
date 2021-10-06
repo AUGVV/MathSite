@@ -1,16 +1,15 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-}
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
+
 <link rel="stylesheet" type="text/css" href="/css/FindBar.css">
 
 <div class="text-center">
-    <h1>На сайте найдено</h1>
-</div><br>
-<div class="d1">
+    <h1>@Localizer["SiteFind"]</h1>
+</div>
+<br>
+<div class="search-bar">
     <form>
-        <input type="text" name="SearchText" placeholder="Искать здесь...">
+        <input type="text" name="SearchText" placeholder="@Localizer["Search"]">
         <button type="submit"></button>
     </form>
 </div>
@@ -20,6 +19,6 @@
 {
     if (item.IsDeleted == 0)
     {
-        <p><a href="/Home/TaskSolve?CurrentId=@item.Id">"@ViewData["SearchText"]" найдено в @item.TaskName</a><br>Тема:@item.Type</p>
+        <p><a href="/Home/TaskSolve?CurrentId=@item.Id">"@ViewData["SearchText"]" &#160 @Localizer["Finded"] &#160 @item.TaskName</a><br>@Localizer["Type"] &#160 @item.Type</p>
     }
 }
