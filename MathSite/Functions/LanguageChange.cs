@@ -13,11 +13,11 @@ namespace MathSite.Functions
 {
     public class LanguageChange
     {
-        public LanguageChange(string Lang, string User, TasksContext db)
+        public LanguageChange(string Lang, string User, TasksContext DataBase)
         {
-            UserConfigModel CurrentUser = db.UserConfig.Where(x => x.User == User).FirstOrDefault();
+            UserConfigModel CurrentUser = DataBase.UserConfig.Where(x => x.User == User).FirstOrDefault();
             CurrentUser.Region = Lang;
-            db.SaveChanges();
+            DataBase.SaveChanges();
         }
 
     }

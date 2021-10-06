@@ -1,13 +1,24 @@
 ﻿@inject SignInManager<IdentityUser> SignInManager
-@using Microsoft.AspNetCore.Mvc.Localization
+
+@using MathSite.Models;
+@inject TasksContext DataBase;
+
+@using Microsoft.AspNetCore.Mvc.Localization;
 @inject IViewLocalizer Localizer
 @{
     var hasExternalLogins = (await SignInManager.GetExternalAuthenticationSchemesAsync()).Any();
+    int IsAdmin = DataBase.UserConfig.Where(x => x.User == SignInManager.Context.User.Identity.Name).FirstOrDefault().IsAdmin;
+
+
 }
 <ul class="nav nav-pills flex-column">
     <li class="nav-item"><a class="nav-link @ManageNavPages.IndexNavClass(ViewContext)" id="profile" asp-page="./Index">@Localizer["Profile"]</a></li>
     <li class="nav-item"><a class="nav-link @ManageNavPages.EmailNavClass(ViewContext)" id="email" asp-page="./Email">@Localizer["Email"]</a></li>
     <li class="nav-item"><a class="nav-link @ManageNavPages.YouTasksNavClass(ViewContext)" id="tasks" asp-page="./YouTasks">@Localizer["YouTasks"]</a></li>
+    @if (IsAdmin == 1)
+    {
+     <li class="nav-item"><a class="nav-link @ManageNavPages.AdminNavClass(ViewContext)" id="Admin" asp-page="./Admin">@Localizer["Admin"]</a></li>
+    }
     <li class="nav-item"><a class="nav-link @ManageNavPages.SolvedTasksNavClass(ViewContext)" id="solved" asp-page="./SolvedTasks">@Localizer["SolvedTasks"]</a></li>
     <li class="nav-item"><a class="nav-link @ManageNavPages.ChangeLanguageNavClass(ViewContext)" id="language" asp-page="./ChangeLanguage">@Localizer["Language"]</a></li>
     <li class="nav-item"><a class="nav-link @ManageNavPages.ChangeThemeNavClass(ViewContext)" id="tasks" asp-page="./ChangeTheme">@Localizer["Theme"]</a></li>

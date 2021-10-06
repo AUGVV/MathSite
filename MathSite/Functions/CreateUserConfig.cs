@@ -9,13 +9,13 @@ namespace MathSite.Functions
     public class CreateUserConfig
     {
 
-        private TasksContext db;
+        private TasksContext DataBase;
 
         public CreateUserConfig(string User, TasksContext context)
         {
-            db = context;
-            db.UserConfig.Add(new UserConfigModel() { User = User, Region = "en", DarkTheme = 0, IsAdmin = 0 });
-            db.SaveChanges();
+            DataBase = context;
+            DataBase.UserConfig.Add(new UserConfigModel() { User = User, Region = "en", DarkTheme = 0, IsAdmin = 0 });
+            DataBase.SaveChanges();
         }
     }
 }

@@ -26,7 +26,7 @@ namespace MathSite.Areas.Identity.Pages.Account
         private readonly UserManager<IdentityUser> _userManager;
         private readonly IEmailSender _emailSender;
         private readonly ILogger<ExternalLoginModel> _logger;
-        private TasksContext db;
+        private TasksContext DataBase;
 
 
         public ExternalLoginModel(
@@ -40,7 +40,7 @@ namespace MathSite.Areas.Identity.Pages.Account
             _userManager = userManager;
             _logger = logger;
             _emailSender = emailSender;
-            db = context;
+            DataBase = context;
         }
 
         [BindProperty]
@@ -92,7 +92,7 @@ namespace MathSite.Areas.Identity.Pages.Account
             var result = await _signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, isPersistent: false, bypassTwoFactor : true);
             if (result.Succeeded)
             {
-                string region = db.UserConfig.Where(x => x.User == info.Principal.Identity.Name).FirstOrDefault().Region;
+                string region = DataBase.UserConfig.Where(x => x.User == info.Principal.Identity.Name).FirstOrDefault().Region;
                 Response.Cookies.Append(CookieRequestCultureProvider.DefaultCookieName, CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(region)));
                 _logger.LogInformation("{Name} logged in with {LoginProvider} provider.", info.Principal.Identity.Name, info.LoginProvider);
                 return LocalRedirect(returnUrl);
@@ -153,7 +153,7 @@ namespace MathSite.Areas.Identity.Pages.Account
                       
                         code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(code));
                         await _userManager.ConfirmEmailAsync(user, code);
-                        CreateUserConfig СreateUserConfig = new CreateUserConfig(user.Email, db);
+                        CreateUserConfig СreateUserConfig = new CreateUserConfig(user.Email, DataBase);
                         await _signInManager.SignInAsync(user, isPersistent: false, info.LoginProvider);
 
                         return LocalRedirect(returnUrl);

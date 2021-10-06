@@ -2,15 +2,19 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using MathSite.Models;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace MathSite.Areas.Identity.Pages.Account.Manage
 {
     public static class ManageNavPages
     {
+  
         public static string Index => "Index";
 
         public static string Email => "Email";
+
+        public static string Admin => "Admin";
 
         public static string ChangeLanguage => "ChangeLanguage";
 
@@ -36,6 +40,7 @@ namespace MathSite.Areas.Identity.Pages.Account.Manage
 
         public static string EmailNavClass(ViewContext viewContext) => PageNavClass(viewContext, Email);
 
+        public static string AdminNavClass(ViewContext viewContext) => PageNavClass(viewContext, Admin);
 
         public static string ChangeLanguageNavClass(ViewContext viewContext) => PageNavClass(viewContext, ChangeLanguage);
         public static string ChangeThemeNavClass(ViewContext viewContext) => PageNavClass(viewContext, ChangeTheme);

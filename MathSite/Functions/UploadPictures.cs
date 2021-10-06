@@ -19,11 +19,11 @@ namespace MathSite.Functions
 {
     public class UploadPictures
     {
-        private TasksContext db;
+        private TasksContext DataBase;
 
         public UploadPictures(string Images, int Id, TasksContext context)
         {
-            db = context;
+            DataBase = context;
             string[] ImageList = Images.Split("|image|");
             foreach (string image in ImageList)
             {
@@ -59,8 +59,8 @@ namespace MathSite.Functions
 
         public void ReferenceToBase(string Url, string DeleteUrl, int Taskid)
         {
-            db.PicturesRef.Add(new PictureRefModel() { Reference = Url, TaskId = Taskid, DeleteReference = DeleteUrl });
-            db.SaveChanges();
+            DataBase.PicturesRef.Add(new PictureRefModel() { Reference = Url, TaskId = Taskid, DeleteReference = DeleteUrl });
+            DataBase.SaveChanges();
         }
     }
 }

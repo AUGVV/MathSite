@@ -10,11 +10,39 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
+using MathSite.Models;
+using System.Diagnostics;
 
 namespace MathSite.Areas.Identity.Pages.Account.Manage
 {
     public partial class Admin : PageModel
     {
+        private TasksContext DataBase;
+        private readonly SignInManager<IdentityUser> _signInManager;
+
+        public Admin(TasksContext TasksContext, SignInManager<IdentityUser> signInManager)
+        {
+            DataBase = TasksContext;
+            _signInManager = signInManager;
+        }
+  
+        public IActionResult OnGet()
+        {
+            if (DataBase.UserConfig.Where(x => x.User == _signInManager.Context.User.Identity.Name).FirstOrDefault().IsAdmin == 0)
+            {
+               return Redirect("/Home/Index");
+            }
+
+            return Page();
+        }
+
+        public IActionResult OnPost(string act, int ChoiseId)
+        {
+     
+
+            return Page();
+        }
+
 
 
     }

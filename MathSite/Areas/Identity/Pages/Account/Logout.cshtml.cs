@@ -18,13 +18,13 @@ namespace MathSite.Areas.Identity.Pages.Account
     {
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly ILogger<LogoutModel> _logger;
-        private TasksContext db;
+        private TasksContext DataBase;
 
         public LogoutModel(SignInManager<IdentityUser> signInManager, ILogger<LogoutModel> logger, TasksContext context)
         {
             _signInManager = signInManager;
             _logger = logger;
-            db = context;
+            DataBase = context;
         }
 
         public void OnGet()

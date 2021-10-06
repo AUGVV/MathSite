@@ -22,7 +22,7 @@ namespace MathSite.Areas.Identity.Pages.Account
         private readonly UserManager<IdentityUser> _userManager;
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly ILogger<LoginModel> _logger;
-        private TasksContext db;
+        private TasksContext DataBase;
 
 
         public LoginModel(SignInManager<IdentityUser> signInManager, 
@@ -33,7 +33,7 @@ namespace MathSite.Areas.Identity.Pages.Account
             _userManager = userManager;
             _signInManager = signInManager;
             _logger = logger;
-            db = context;
+            DataBase = context;
         }
 
         [BindProperty]
@@ -91,7 +91,7 @@ namespace MathSite.Areas.Identity.Pages.Account
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User logged in.");
-                    string region = db.UserConfig.Where(x => x.User == Input.Email).FirstOrDefault().Region;
+                    string region = DataBase.UserConfig.Where(x => x.User == Input.Email).FirstOrDefault().Region;
                     Response.Cookies.Append(CookieRequestCultureProvider.DefaultCookieName, CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(region)));
                     return LocalRedirect(returnUrl);
                 }

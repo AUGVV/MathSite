@@ -10,25 +10,25 @@ namespace MathSite.Functions
     public class CreateTags
     {
 
-        private TasksContext db;
+        private TasksContext DataBase;
 
         public CreateTags(string Tags, int Id, TasksContext context)
         {
-            db = context;
+            DataBase = context;
             string[] SplitTags = Tags.ToLower().Split('#');
 
             foreach (string Tag in SplitTags)
             {
-                if(db.Tags.Where(x=>x.TagName == Tag).FirstOrDefault() == null)
+                if(DataBase.Tags.Where(x=>x.TagName == Tag).FirstOrDefault() == null)
                 {
-                    db.Tags.Add(new TagsModel() { TagName = Tag });
-                    db.SaveChanges();
+                    DataBase.Tags.Add(new TagsModel() { TagName = Tag });
+                    DataBase.SaveChanges();
                 }
 
-                TagsModel CurrentTag = db.Tags.Where(x => x.TagName == Tag).FirstOrDefault();
-                CurrentTag.Count += 1; 
-                db.TaskTag.Add(new TaskTagModel() { Tag = CurrentTag.Id, TaskId = Id });
-                db.SaveChanges();
+                TagsModel CurrentTag = DataBase.Tags.Where(x => x.TagName == Tag).FirstOrDefault();
+                CurrentTag.Count += 1;
+                DataBase.TaskTag.Add(new TaskTagModel() { Tag = CurrentTag.Id, TaskId = Id });
+                DataBase.SaveChanges();
             }
         }
     }

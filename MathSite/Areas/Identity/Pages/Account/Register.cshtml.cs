@@ -25,7 +25,7 @@ namespace MathSite.Areas.Identity.Pages.Account
         private readonly UserManager<IdentityUser> _userManager;
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
-        private TasksContext db;
+        private TasksContext DataBase;
 
         public RegisterModel(
             UserManager<IdentityUser> userManager,
@@ -38,7 +38,7 @@ namespace MathSite.Areas.Identity.Pages.Account
             _signInManager = signInManager;
             _logger = logger;
             _emailSender = emailSender;
-            db = context;
+            DataBase = context;
 
 
         }
@@ -102,7 +102,7 @@ namespace MathSite.Areas.Identity.Pages.Account
      
                     if (_userManager.Options.SignIn.RequireConfirmedAccount)
                     {
-                        CreateUserConfig CreateUserConfig = new CreateUserConfig(user.Email, db);
+                        CreateUserConfig CreateUserConfig = new CreateUserConfig(user.Email, DataBase);
                         return RedirectToPage("./Login", new { email = Input.Email, returnUrl = returnUrl });
                     }
                     else
