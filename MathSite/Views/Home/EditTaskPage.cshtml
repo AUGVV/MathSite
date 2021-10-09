@@ -20,32 +20,24 @@
     {
         alltags += $"#{item.TagName}";
     }
-
-  
-
-
-
 }
 <link rel="stylesheet" type="text/css" href="/css/Tags.css">
 <link rel="stylesheet" type="text/css" href="/css/EditTask.css">
 <link rel="stylesheet" type="text/css" href="/css/DragDrop.css">
 
+<input type="hidden" name="Tags" id="current-id" value="@ViewData["CurrentId"]" />
+
 <p>
-    <input type="hidden" name="Tags" id="current-id" value="@ViewData["CurrentId"]" />
-
-
     <div class="edit-block">
         <b>@Localizer["EditedTask"]</b><br>
         <b>ID:</b>&#160 @ViewData["CurrentId"]<br>
         <br>
     </div><br><br>
-
     <div class="edit-block">
         <b>@Localizer["CreatorName"]</b><br>
         @ViewData["CurrentUser"]<br>
         <br>
     </div><br><br>
-
     <div class="edit-block">
         <b>@Localizer["TaskName"]</b><br>
         <span id="task-name-span">@ViewData["TaskName"]</span>
@@ -54,17 +46,15 @@
         <input type="text" name="TaskName" required id="task-name" size="40"> <Button type="submit" id="change-name-button" class="game-button">@Localizer["Change"]</Button><br>
         <br>
     </div><br><br>
-
     <div class="edit-block">
         <b>@Localizer["TaskType"]</b><br>
         <span id="task-type-span">@ViewData["TaskType"]</span>
         <br>
         <b>@Localizer["NewTaskType"]</b><br>
         <select name="type" asp-items="Model.SelectList" id="type" value="" class="form-control"></select> <br>
-         <Button type="submit" id="change-type-button" class="game-button">@Localizer["Change"]</Button><br>
+        <Button type="submit" id="change-type-button" class="game-button">@Localizer["Change"]</Button><br>
         <br>
     </div><br><br>
-
     <div class="edit-block">
         <b>@Localizer["TaskCondition"]</b><br>
         <span id="task-condition-span">@ViewData["TaskCondition"]</span>
@@ -74,60 +64,53 @@
         <Button type="submit" id="change-condition-button" class="game-button">@Localizer["Change"]</Button><br>
         <br>
     </div><br><br>
-
-              <div class="edit-block">
-                  <b>@Localizer["CurrentAnswers"]</b><br>
-                  <b>@Localizer["Answer1"]</b>&#160   <span id="task-answer-first-span">@Answers[0]</span><br><br>
-                  <b>@Localizer["Answer2"]</b>&#160   <span id="task-answer-second-span">@Answers[1]</span><br><br>
-                  <b>@Localizer["Answer3"]</b>&#160   <span id="task-answer-third-span">@Answers[2]</span><br><br>
-                  <b>@Localizer["NewAnswers"]</b>&#160<br>@Localizer["AnswersHelp1"]<br>@Localizer["AnswersHelp2"]<br>
-                  <b>@Localizer["Answer1"]</b>&#160  <input type="text" name="TaskName" id="change-first-answer-button" size="40" value=""><br><br>
-                  <b>@Localizer["Answer2"]</b>&#160  <input type="text" name="TaskName" id="change-second-answer-button" size="40" value=""><br><br>
-                  <b>@Localizer["Answer3"]</b>&#160  <input type="text" name="TaskName" id="change-third-answer-button" size="40" value=""><br><br>
-                  <Button type="submit" id="change-answer-button" class="game-button">@Localizer["Change"]</Button><br>
-                  <br>
-              </div><br><br>
-                        <div class="edit-block">
-                            <b>@Localizer["Tags"]</b>
-                            @Localizer["TagsHelp"]<br>
-                            <input type="hidden" name="Tags" id="hidden-tags-list" value="@alltags" /><br>
-                            <input list="tags-list" type="text" input id="tag-name" size="20">   <Button type="submit" id="add-tag" class="game-button">@Localizer["AddTag"]</Button><br>
-                            <datalist id="tags-list">
-                                @foreach (var item in Model.AllTags)
-                                {
-                                    <option value="@item.TagName"></option>
-                                }
-                            </datalist><br>
-                            <div id="tags-container">
-                            </div><br>
-                                  <Button type="submit" id="change-tags-button" class="game-button">@Localizer["Change"]</Button>  <span hidden style="color:forestgreen" id="task-tags-changed">@Localizer["TagsChanged"]</span><br>
-                        </div><br><br>
-
-                                  <div class="edit-block">
-                                      <input type="hidden" name="images" id="images" />
-                                      <input type="hidden" name="delete-images-id" id="delete-images-id" />
-                                      <b>@Localizer["Pictures"]</b><br>
-                                     @Localizer["PicturesHelp"]<br>
-
-                                      <div id="images-container">
-                                          @foreach (var item in Model.Pictures)
-                                          {
-                                              <img onclick="RemovePicture(@item.Id)" id="pic-@item.Id" width="100" src="@item.Reference">
-                                          }
-                                      </div><br>
-                                      <div id="drop-area" class="my-form">
-                                          <input type="file" id="fileElem" multiple accept="image/*" onchange="handleFiles(this.files)">
-                                          <label class="button" for="fileElem">@Localizer["ChoisePic"]</label>  <label class="button" id="delete-elem">@Localizer["DeletePic"]</label>
-                                          <div id="gallery"></div>
-
-                                      </div>
-                                      <span id="Avalible-pictures-span"></span><br>
-                                      <Button type="submit" id="change-pictures-button" class="game-button">@Localizer["Change"]</Button>
-
-                                  </div><br><br>
+    <div class="edit-block">
+        <b>@Localizer["CurrentAnswers"]</b><br>
+        <b>@Localizer["Answer1"]</b>&#160   <span id="task-answer-first-span">@Answers[0]</span><br><br>
+        <b>@Localizer["Answer2"]</b>&#160   <span id="task-answer-second-span">@Answers[1]</span><br><br>
+        <b>@Localizer["Answer3"]</b>&#160   <span id="task-answer-third-span">@Answers[2]</span><br><br>
+        <b>@Localizer["NewAnswers"]</b>&#160<br>@Localizer["AnswersHelp1"]<br>@Localizer["AnswersHelp2"]<br>
+        <b>@Localizer["Answer1"]</b>&#160  <input type="text" name="TaskName" id="change-first-answer-button" size="40" value=""><br><br>
+        <b>@Localizer["Answer2"]</b>&#160  <input type="text" name="TaskName" id="change-second-answer-button" size="40" value=""><br><br>
+        <b>@Localizer["Answer3"]</b>&#160  <input type="text" name="TaskName" id="change-third-answer-button" size="40" value=""><br><br>
+        <Button type="submit" id="change-answer-button" class="game-button">@Localizer["Change"]</Button><br>
+        <br>
+    </div><br><br>
+    <div class="edit-block">
+        <b>@Localizer["Tags"]</b>
+        @Localizer["TagsHelp"]<br>
+        <input type="hidden" name="Tags" id="hidden-tags-list" value="@alltags" /><br>
+        <input list="tags-list" type="text" input id="tag-name" size="20">   <Button type="submit" id="add-tag" class="game-button">@Localizer["AddTag"]</Button><br>
+        <datalist id="tags-list">
+            @foreach (var item in Model.AllTags)
+            {
+                <option value="@item.TagName"></option>
+            }
+        </datalist><br>
+        <div id="tags-container">
+        </div><br>
+        <Button type="submit" id="change-tags-button" class="game-button">@Localizer["Change"]</Button>  <span hidden style="color:forestgreen" id="task-tags-changed">@Localizer["TagsChanged"]</span><br>
+    </div><br><br>
+    <div class="edit-block">
+        <input type="hidden" name="images" id="images" />
+        <input type="hidden" name="delete-images-id" id="delete-images-id" />
+        <b>@Localizer["Pictures"]</b><br>
+        @Localizer["PicturesHelp"]<br>
+        <div id="images-container">
+            @foreach (var item in Model.Pictures)
+            {
+                <img onclick="RemovePicture(@item.Id)" id="pic-@item.Id" width="100" src="@item.Reference">
+            }
+        </div><br>
+        <div id="drop-area" class="my-form">
+            <input type="file" id="fileElem" multiple accept="image/*" onchange="handleFiles(this.files)">
+            <label class="button" for="fileElem">@Localizer["ChoisePic"]</label>  <label class="button" id="delete-elem">@Localizer["DeletePic"]</label>
+            <div id="gallery"></div>
+        </div>
+        <span id="Avalible-pictures-span"></span><br>
+        <Button type="submit" id="change-pictures-button" class="game-button">@Localizer["Change"]</Button>
+    </div><br><br>
 </p>
-
-
 <script src="/js/signalr/dist/browser/signalr.min.js"></script>
 <script>
     const hubConnection = new signalR.HubConnectionBuilder().withUrl("/hubs").build();
@@ -145,43 +128,36 @@
 
     function ReloadPicturesAvalible() {
         let LoadedPictures = document.getElementById('images-container').childElementCount;
-        console.log(LoadedPictures);
         PictureAvalible = 3 - LoadedPictures;
         document.getElementById('Avalible-pictures-span').innerHTML = PictureAvalible + "/3"
     }
-
     function RemovePicture(e) {
         document.getElementById("delete-images-id").value += '#' + e
         document.getElementById('pic-' + e).remove();
         ReloadPicturesAvalible();
     }
-
     let Drop = document.getElementById('drop-area');
     document.getElementById("delete-elem").addEventListener("click", function (e) {
         document.getElementById("images").value = "";
         RemoveOld();
     });
 
-
     ;['dragenter', 'dragover', 'dragleave', 'drop'].forEach(x => {
         Drop.addEventListener(x, preventDefaults, false)
     })
 
-        ;['dragenter', 'dragover'].forEach(x => {
-            Drop.addEventListener(x, highlight, false)
-        })
+    ;['dragenter', 'dragover'].forEach(x => {
+        Drop.addEventListener(x, highlight, false)
+    })
 
-        ;['dragleave', 'drop'].forEach(x => {
-            Drop.addEventListener(x, unhighlight, false)
-        })
-
+    ;['dragleave', 'drop'].forEach(x => {
+        Drop.addEventListener(x, unhighlight, false)
+    })
 
     function preventDefaults(e) {
         e.preventDefault()
         e.stopPropagation()
     }
-
-
     function highlight(e) {
         Drop.classList.add('highlight')
     }
@@ -201,24 +177,20 @@
         files.forEach(LoadFile)
         files.forEach(PreviewFile)
     }
-
     function RemoveOld() {
         let del = document.getElementById('gallery')
         while (del.firstChild) {
             del.removeChild(del.firstChild);
         }
     }
-
     function LoadFile(file) {
         let reader = new FileReader()
         reader.readAsBinaryString(file)
         reader.onloadend = function () {
             var base64 = window.btoa(reader.result);
-            console.log(base64);
             document.getElementById("images").value = document.getElementById("images").value + "|image|" + base64;
         }
     }
-
     function PreviewFile(file) {
         let reader = new FileReader()
         reader.readAsDataURL(file)
@@ -228,21 +200,16 @@
             document.getElementById('gallery').appendChild(img)
         }
     }
-
     document.getElementById("change-pictures-button").addEventListener("click", function (e) {
         var NewPictures = document.getElementById("images").value
         var PicturesForDelete = document.getElementById("delete-images-id").value.slice(1)
-
         hubConnection.invoke('ChangePictures', CurrentId, NewPictures, PicturesForDelete).catch(function (err) {
             return console.error(err.toString());
         });
     });
-    hubConnection.start();
-
     hubConnection.on('PictureChanged', function (message) {
         location.reload();
     });
-
 
     document.getElementById("change-name-button").addEventListener("click", function (e) {
         var NewName = document.getElementById("task-name").value
@@ -254,28 +221,22 @@
             });
         }
     });
-    hubConnection.start();
-
     hubConnection.on('NameChanged', function (message) {
         document.getElementById("task-name-span").innerHTML = message;
     });
 
     document.getElementById("change-type-button").addEventListener("click", function (e) {
         var NewType = document.getElementById("type").value
-
         hubConnection.invoke('ChangeTaskType', CurrentId, NewType).catch(function (err) {
             return console.error(err.toString());
         });
     });
-    hubConnection.start();
-
     hubConnection.on('TypeChanged', function (message) {
         document.getElementById("task-type-span").innerHTML = message;
     });
 
     document.getElementById("change-condition-button").addEventListener("click", function (e) {
         var NewCondition = document.getElementById("task-condition").value
-
         if (NewCondition == "") { alert('Condition cannot be empty') }
         else {
             hubConnection.invoke('ChangeTaskCondition', CurrentId, NewCondition).catch(function (err) {
@@ -283,8 +244,6 @@
             });
         }
     });
-    hubConnection.start();
-
     hubConnection.on('ConditionChanged', function (message) {
         document.getElementById("task-condition-span").innerHTML = message;
     });
@@ -293,7 +252,6 @@
         var FirstAnswer = document.getElementById("change-first-answer-button").value
         var SecondAnswer = document.getElementById("change-second-answer-button").value
         var ThirdAnswer = document.getElementById("change-third-answer-button").value
-
         if (FirstAnswer == "") { alert('The first answer must be completed') }
         else {
             hubConnection.invoke('ChangeTaskAnswers', CurrentId, FirstAnswer, SecondAnswer, ThirdAnswer).catch(function (err) {
@@ -301,19 +259,14 @@
             });
         }
     });
-    hubConnection.start();
-
     hubConnection.on('AnswersChanged', function (FirstAnswer, SecondAnswer, ThirdAnswer) {
         document.getElementById("task-answer-first-span").innerHTML = FirstAnswer;
         document.getElementById("task-answer-second-span").innerHTML = SecondAnswer;
         document.getElementById("task-answer-third-span").innerHTML = ThirdAnswer;
-
     });
-
 
     document.getElementById("change-tags-button").addEventListener("click", function (e) {
         var NewTags = document.getElementById("hidden-tags-list").value
-
         hubConnection.invoke('ChangeTaskTags', CurrentId, NewTags).catch(function (err) {
             return console.error(err.toString());
         });
@@ -323,7 +276,6 @@
     hubConnection.on('TagsChanged', function () {
         document.getElementById("task-tags-changed").hidden = false;
     });
-
 
     document.getElementById("add-tag").addEventListener("click", function (e) {
         document.getElementById("task-tags-changed").hidden = true;
@@ -345,7 +297,6 @@
         document.getElementById('tags-container').appendChild(span);
         GenerateTagsStr();
     }
-
     function GenerateTagsStr() {
         document.getElementById("hidden-tags-list").value = "";
         let nodes = document.getElementById('tags-container').childNodes;
@@ -356,5 +307,4 @@
         }
         document.getElementById("hidden-tags-list").value = document.getElementById("hidden-tags-list").value.slice(1);
     }
-
 </script>

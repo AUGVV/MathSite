@@ -1,8 +1,6 @@
 ﻿@using Microsoft.AspNetCore.Mvc.Localization
 @inject IViewLocalizer Localizer
-@{
 
-}
 <link rel="stylesheet" type="text/css" href="/css/FindBar.css">
 <link rel="stylesheet" type="text/css" href="/css/Tags.css">
 
@@ -11,17 +9,13 @@
         <input type="text" name="SearchText" placeholder="@Localizer["SearchThere"]">
         <button type="submit"></button>
     </form>
-</div>
-<br>
-<br>
+</div><br><br>
 <div>
     <div class="text-center">
         <button id="recent" type="submit" class="btn btn-primary">@Localizer["Recent"]</button>
         <button id="raitings" type="submit" class="btn btn-primary">@Localizer["Top"]</button>
         <button id="reload" type="submit" class="btn btn-primary">@Localizer["ReloadPage"]</button>
-        <div />
-
-        <br>
+        <div/><br>
         <form method="post">
             <table class="table" id="recent-table">
                 <tr>
@@ -45,7 +39,6 @@
                     <tr><td>@item.TaskName</td><td>@item.Type</td><td>@item.Rating /5</td><td><button type="submit" asp-route-Id="@item.Id" class="btn btn-primary">@Localizer["Solve"]</button></td></tr>
                 }
             </table><br><br>
-
             <div class="tags">
                 @foreach (var item in Model.Tags)
                 {

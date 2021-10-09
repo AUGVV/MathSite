@@ -26,7 +26,6 @@ namespace MathSite.Areas.Identity.Pages.Account.Manage
             _signInManager = signInManager;
         }
 
-
         public void OnGet()
         {
         }
@@ -34,7 +33,6 @@ namespace MathSite.Areas.Identity.Pages.Account.Manage
         public IActionResult OnPost(string language)
         {
             string SingInAuthor = _signInManager.Context.User.Identity.Name;
-
             Response.Cookies.Append(CookieRequestCultureProvider.DefaultCookieName, CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(language)));
             LanguageChange languageChange = new LanguageChange(language, SingInAuthor, Db);
             return Redirect($"/Identity/Account/Manage/ChangeLanguage");

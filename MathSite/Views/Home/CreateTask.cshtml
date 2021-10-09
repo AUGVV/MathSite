@@ -11,7 +11,7 @@
     <b>@ViewData["CurrentUser"] </b><br>
 </p>
 <form method="post">
-    <input type="hidden" name="images" id="images" />
+    <input type="hidden" name="images" id="images"/>
     <p>
         <b>@Localizer["TaskName"]</b><br>
         <input type="text" name="TaskName" required id="task-name" size="40">
@@ -25,7 +25,6 @@
         <textarea wrap="hard" name="TaskCondition" id="task-condition" required cols="120" rows="20"></textarea>
     </p>
     <p>
-
         <b>@Localizer["Answer"]</b><br>
         @Localizer["AnswerHelp"]<br>
         <div>
@@ -49,11 +48,8 @@
                 <option value="@item.TagName"></option>
             }
         </datalist>
-        <div id="tags-container">
-
-        </div>
+        <div id="tags-container"></div>
     </p>
-
     <div id="drop-area" class="my-form">
         <p>@Localizer["LoadPictures"]</p>
         <input type="file" id="fileElem" multiple accept="image/*" onchange="handleFiles(this.files)">
@@ -62,10 +58,8 @@
     </div>
     <button id="create-task" asp-route-Act="create" type="submit" class="btn btn-primary">@Localizer["Create"]</button>
 </form>
-
 <script>
-
-
+    let Drop = document.getElementById('drop-area');
 
     document.getElementById("add-tage").addEventListener("click", function (e) {
         var CurrentValue = document.getElementById("tag-name").value;
@@ -84,7 +78,6 @@
             GenerateTagsStr();
         }
     });
-
     function GenerateTagsStr() {
         document.getElementById("hidden-tags-list").value = "";
         let nodes = document.getElementById('tags-container').childNodes;
@@ -96,19 +89,10 @@
         document.getElementById("hidden-tags-list").value = document.getElementById("hidden-tags-list").value.slice(1);
     }
 
-
-
-
-
-
-
-    let Drop = document.getElementById('drop-area');
-
     document.getElementById("delete-elem").addEventListener("click", function (e) {
         document.getElementById("images").value = "";
         RemoveOld();
     });
-
 
     ;['dragenter', 'dragover', 'dragleave', 'drop'].forEach(x => {
         Drop.addEventListener(x, preventDefaults, false)
@@ -122,13 +106,10 @@
             Drop.addEventListener(x, unhighlight, false)
         })
 
-
     function preventDefaults(e) {
         e.preventDefault()
         e.stopPropagation()
     }
-
-
     function highlight(e) {
         Drop.classList.add('highlight')
     }
@@ -136,7 +117,6 @@
         Drop.classList.remove('highlight')
     }
     Drop.addEventListener('drop', handleDrop, false)
-
     function handleDrop(e) {
         let files = e.dataTransfer.files
         handleFiles(files)
@@ -154,17 +134,14 @@
             del.removeChild(del.firstChild);
         }
     }
-
     function LoadFile(file) {
         let reader = new FileReader()
         reader.readAsBinaryString(file)
         reader.onloadend = function () {
             var base64 = window.btoa(reader.result);
-            console.log(base64);
             document.getElementById("images").value = document.getElementById("images").value + "|image|" + base64;
         }
     }
-
     function PreviewFile(file) {
         let reader = new FileReader()
         reader.readAsDataURL(file)
@@ -174,7 +151,6 @@
             document.getElementById('gallery').appendChild(img)
         }
     }
-
     document.getElementById("first-answer").addEventListener("keydown", function (e) {
         var first = document.getElementById("first-answer").value;
         var third = document.getElementById("third-answer").value;
@@ -198,5 +174,4 @@
             document.getElementById("third-hiden").hidden = true;
         }
     });
-
 </script>

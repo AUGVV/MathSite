@@ -15,30 +15,22 @@
 <div class="search-bar">
     <form>
         <input type="text" name="SearchText" placeholder="@Localizer["Search"]">
-        <input type="hidden" name="CurrentId" value="@ViewData["Id"]">
         <button type="submit"></button>
     </form>
-</div>
-<br>
-
+</div><br>
 <div class="text-center">
     <h1>@ViewData["CurrentTask"]</h1>
 </div>
-
 <div class="text-center">
     <b>@Localizer["TaskType"]</b>
     @ViewData["TaskType"]<br>
-</div>
-<br>
-
+</div><br>
 <div class="text-center">
     @foreach (var item in Model.Tags)
     {
         <span class="static-tag">#@item.TagName</span>
     }
-</div>
-<br>
-
+</div><br>
 @if ((int)ViewData["PicturesCount"]! > 0)
 {
     <div class="slideshow-container">
@@ -62,15 +54,12 @@
             <span class="dot" onclick="currentSlide(@count)"></span>
             count = count + 1;
         }
-    </div>
-    <br>
+    </div><br>
 }
-
 <div class="text-center">
     <b>@Localizer["Condition"]</b><br>
     @ViewData["CurrentCondition"]<br><br>
 </div>
-
 @if ((bool)ViewData["IsAutorize"] == true)
 {
     <div class="text-center">
@@ -84,7 +73,6 @@
         </div>
         <button id="toanswer" type="submit" class="btn btn-primary">@Localizer["ToAnswer"]</button><br><br>
     </div>
-
     @if ((bool)ViewData["IsVoted"] == false)
     {
         <div class="rating-area" id="raitings-active">
@@ -95,11 +83,10 @@
             <input type="radio" id="star-3" name="rating" value="3" onclick="Rating(3)">
             <label for="star-3"></label>
             <input type="radio" id="star-2" name="rating" value="2" onclick="Rating(2)">
-            <label for="star-2" ></label>
+            <label for="star-2"></label>
             <input type="radio" id="star-1" name="rating" value="1" onclick="Rating(1)">
-            <label for="star-1" ></label>
+            <label for="star-1"></label>
         </div>
-
         <div class="rating-result" id="raitings-new" hidden></div>
     }
     else if ((bool)ViewData["IsVoted"] == true)
@@ -115,17 +102,10 @@
             }
         </div>
     }
-
-
-
     <template id="CommentTemplate">
         <div class="comment">
-            <div id="who" class="who">
-
-            </div>
-            <span id="text">
-
-            </span>
+            <div id="who" class="who"></div>
+            <span id="text"></span>
             <br>
             <div class="likes-bar" id="likes-body">
                 <button id="like" class="like">@Localizer["Like"]</button>
@@ -135,8 +115,6 @@
             </div>
         </div>
     </template>
-
-
     <b>@Localizer["Comment"]</b>
     <br>
     <textarea wrap="hard" placeholder="as you say" cols="120" rows="5" style="resize:none;" id="comment"></textarea>
@@ -172,13 +150,13 @@
 
     var slideCount = @ViewData["PicturesCount"];
     var slideIndex = 1;
+    var CurrentId = document.getElementById("taskid").value;
+    var UserName = document.getElementById("username").value;
+
     showSlides(slideIndex);
 
     document.getElementById("toanswer").addEventListener("click", function (e) {
-        var CurrentId = document.getElementById("taskid").value;
         var Answer = document.getElementById("currentanswer").value;
-        var UserName = document.getElementById("username").value;
-
         if (Answer == "") { alert('Введите ваш ответ') }
         else {
             hubConnection.invoke('QuestionAnswer', CurrentId, Answer, UserName).catch(function (err) {
@@ -186,13 +164,8 @@
             });
         }
     });
-    hubConnection.start();
-
     document.getElementById("say-to-task").addEventListener("click", function (e) {
-        var CurrentId = document.getElementById("taskid").value;
         var WhatSay = document.getElementById("comment").value;
-        var UserName = document.getElementById("username").value;
-
         if (WhatSay == "") { alert('Комментарий не должен быть пустыми') }
         else {
             hubConnection.invoke('AddToComment', CurrentId, WhatSay, UserName).catch(function (err) {
@@ -200,21 +173,12 @@
             });
         }
     });
-    hubConnection.start();
-
     function DisLike(state, id) {
-        console.log(state);
-        var UserName = document.getElementById("username").value;
-
-        console.log(state);
-        console.log(id);
         hubConnection.invoke('DisLikeComment', id, UserName, state).catch(function (err) {
             return console.error(err.toString());
         });
     }
-
     hubConnection.on('CommentLiked', function (CommentId, NewLikeCount, DisOrLike) {
-
         if (DisOrLike == "like") {
             document.getElementById("like-" + CommentId).innerHTML = NewLikeCount;
         }
@@ -222,12 +186,8 @@
             document.getElementById("dislike-" + CommentId).innerHTML = NewLikeCount;
         }
     });
-
-
-
     hubConnection.on('CommentsDo', function (TaskId, CommentId, Author, Text) {
         if (TaskId == document.getElementById("taskid").value) {
-
             var Comment = CommentTemplate.content.cloneNode(true);
             Comment.getElementById('who').innerHTML = Author
             Comment.getElementById('text').innerHTML = Text
@@ -238,8 +198,6 @@
             var CommentTemp = document.getElementById('comment-body').appendChild(Comment);
         }
     });
-
-
     hubConnection.on('Result', function (message) {
         if (message == true) {
             document.getElementById("answer-correct").hidden = false;
@@ -250,36 +208,28 @@
             document.getElementById("answer-correct").hidden = true;
         }
     });
-
     function Rating(e) {
-        var UserName = document.getElementById("username").value;
         var CurrentId = document.getElementById("taskid").value;
         hubConnection.invoke('AddRating', e, CurrentId, UserName).catch(function (err) {
             return console.error(err.toString());
         });
-        console.log(e);
     }
     hubConnection.start();
 
     hubConnection.on('Raiting', function (message) {
         var num = Number(message)
-        console.log(num);
         for (var i = 0; i < 5 - num; i++) {
-
             let span = document.createElement('span');
             document.getElementById('raitings-new').appendChild(span);
         }
         for (var i = 0; i < num; i++) {
-
             let span = document.createElement('span');
             span.classList.add("active");
             document.getElementById('raitings-new').appendChild(span);
         }
-
         document.getElementById("raitings-active").hidden = true;
         document.getElementById("raitings-new").hidden = false;
     });
-
 
         function plusSlides(n) {
             showSlides(slideIndex += n);

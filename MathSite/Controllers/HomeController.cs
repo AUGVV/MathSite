@@ -122,12 +122,6 @@ namespace MathSite.Controllers
             }
 
             List<PictureRefModel> Pictures = DataBase.PicturesRef.Where(x => x.TaskId == CurrentId)?.ToList();
-            List<string> Urls = new List<string>();
-
-            foreach (PictureRefModel picture in Pictures)
-            {
-                Urls.Add(picture.Reference);
-            }
 
             if ((IsAutorize != false) && (DataBase.UserTaskState.Where(x => x.UserName == SingInAuthor && x.TaskId == CurrentId).FirstOrDefault().Voted == 1))
             {
@@ -141,6 +135,12 @@ namespace MathSite.Controllers
             ViewData["UserName"] = _signInManager.Context.User.Identity.Name;
             ViewData["Id"] = CurrentId;
             ViewData["PicturesCount"] = Pictures.Count;
+
+            List<string> Urls = new List<string>();
+            foreach (PictureRefModel picture in Pictures)
+            {
+                Urls.Add(picture.Reference);
+            }
 
             TaskSolveModel TaskSolveModel = new TaskSolveModel()
             {

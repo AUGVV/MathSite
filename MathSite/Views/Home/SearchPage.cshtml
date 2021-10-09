@@ -5,16 +5,13 @@
 
 <div class="text-center">
     <h1>@Localizer["SiteFind"]</h1>
-</div>
-<br>
+</div><br>
 <div class="search-bar">
     <form>
         <input type="text" name="SearchText" placeholder="@Localizer["Search"]">
         <button type="submit"></button>
     </form>
-</div>
-<br>
-<br>
+</div><br><br>
 @foreach (var item in Model)
 {
     if (item.IsDeleted == 0)

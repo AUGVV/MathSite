@@ -1,22 +1,23 @@
 ﻿@page
 @model MathSite.Areas.Identity.Pages.Account.Manage.ChangeLanguageModel
-@{
-}
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
 
-<b>Текущий язык:</b>
+
+<b>@Localizer["CurrentLang"]</b>
 <br>
-Русский
+@Localizer["Lang"]
 <br>
-<b>Изменить язык:</b>
+<b>@Localizer["ChoiseLang"]</b>
 <br>
 
 <form method="post">
     <select name="language">
-        <option disabled>Выберите язык</option>
+        <option disabled>@Localizer["ChoiseLang"]</option>
         <option value="ru">Русский</option>
         <option value="en">English</option>
-    </select>
-    <input type="submit" value="Изменить">
+    </select><br><br>
+    <input type="submit" class="btn btn-primary" value="@Localizer["ChangeLang"]">
 </form>
 <br>
 
