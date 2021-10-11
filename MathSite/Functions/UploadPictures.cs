@@ -47,7 +47,7 @@ namespace MathSite.Functions
             using (var WebClient = new WebClient())
             {
                 NameValueCollection parameters = new NameValueCollection();
-                parameters.Add("key", AzureSecretKey.TakeSecretKey("Imgbb", "549917b67adf4d8fa16ff1c3b8b02527")); //Запихнуть в secret! НЕ ЗАБЫТЬ !
+                parameters.Add("key", AzureSecretKey.TakeSecretKey("Imgbb", "549917b67adf4d8fa16ff1c3b8b02527"));
                 parameters.Add("image", image);
                 try
                 {
