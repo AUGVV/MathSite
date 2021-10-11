@@ -1,4 +1,5 @@
 using MathSite.Data;
+using MathSite.Functions;
 using MathSite.Hubs;
 using MathSite.Models;
 using Microsoft.AspNetCore.Builder;
@@ -32,18 +33,11 @@ namespace MathSite
 
         public IConfiguration Configuration { get; }
 
-        string TakeSecretKey(string name, string code)
-        {
-            var KeyVaultUrl = $"https://task4vault.vault.azure.net/secrets/" + name + "/" + code;
-            AzureServiceTokenProvider azureServiceTokenProvider = new AzureServiceTokenProvider();
-            KeyVaultClient keyVaultClient = new KeyVaultClient(new KeyVaultClient.AuthenticationCallback(azureServiceTokenProvider.KeyVaultTokenCallback));
-            var secret = keyVaultClient.GetSecretAsync(KeyVaultUrl).Result.Value;
-            Debug.WriteLine(secret);
-            return secret;
-        }
-
         public void ConfigureServices(IServiceCollection services)
         {
+            AzureSecretKey AzureSecretKey = new AzureSecretKey();
+            
+
             services.AddLocalization(options => options.ResourcesPath = "Resources");
             services.AddSignalR(hubOptions =>
             {
@@ -57,16 +51,15 @@ namespace MathSite
             services.AddControllersWithViews().AddViewLocalization();
             services.AddAuthentication().AddFacebook(facebookOptions =>
             {
-                 facebookOptions.AppId = "391460485966722";
-                 facebookOptions.AppSecret = "939f7b3c30451f7aacafd1eba36131b5";
+                 facebookOptions.AppId = AzureSecretKey.TakeSecretKey("FacebookAppID", "9e5eb1a22f324d83914e40c8a6907b60");
+                 facebookOptions.AppSecret = AzureSecretKey.TakeSecretKey("FacebookAppSecret", "76d5d06259054f339fba22c5876724f6");
             });
-            //  services.AddAuthentication().AddTwitter(twitterOptions =>
-            //  {
-            //      twitterOptions.ConsumerKey = "";
-            //      twitterOptions.ConsumerSecret = "";
-            //      twitterOptions.RetrieveUserDetails = true;
-            //  });
-
+          //  services.AddAuthentication().AddTwitter(twitterOptions =>
+          //  {
+          //        twitterOptions.ConsumerKey = "";
+          //        twitterOptions.ConsumerSecret = "";
+           //       twitterOptions.RetrieveUserDetails = true;
+           // });
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

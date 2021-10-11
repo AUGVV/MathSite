@@ -42,10 +42,12 @@ namespace MathSite.Functions
         {
             byte[] Response;
             string json = "";
+            AzureSecretKey AzureSecretKey = new AzureSecretKey();
+
             using (var WebClient = new WebClient())
             {
                 NameValueCollection parameters = new NameValueCollection();
-                parameters.Add("key", "b626821a9813f418d523698ba34376d6"); //Запихнуть в secret! НЕ ЗАБЫТЬ !
+                parameters.Add("key", AzureSecretKey.TakeSecretKey("Imgbb", "549917b67adf4d8fa16ff1c3b8b02527")); //Запихнуть в secret! НЕ ЗАБЫТЬ !
                 parameters.Add("image", image);
                 try
                 {
