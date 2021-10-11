@@ -12,24 +12,37 @@ namespace MathSite.Functions
 
         private TasksContext DataBase;
 
-        public CreateTags(string Tags, int Id, TasksContext context)
+        public CreateTags(TasksContext context)
         {
             DataBase = context;
-            string[] SplitTags = Tags.ToLower().Split('#');
+        }
+
+        public void Create(string TaskTags, int TaskId)
+        {
+            string[] SplitTags = TaskTags.ToLower().Split('#');
 
             foreach (string Tag in SplitTags)
             {
-                if(DataBase.Tags.Where(x=>x.TagName == Tag).FirstOrDefault() == null)
+                if (DataBase.Tags.Where(x => x.TagName == Tag).FirstOrDefault() == null)
                 {
-                    DataBase.Tags.Add(new TagsModel() { TagName = Tag });
-                    DataBase.SaveChanges();
+                    SaveTag(Tag);
                 }
-
-                TagsModel CurrentTag = DataBase.Tags.Where(x => x.TagName == Tag).FirstOrDefault();
-                CurrentTag.Count += 1;
-                DataBase.TaskTag.Add(new TaskTagModel() { Tag = CurrentTag.Id, TaskId = Id });
-                DataBase.SaveChanges();
+                TagAddToTask(Tag, TaskId);
             }
+        }
+
+        void SaveTag(string Tag)
+        {
+            DataBase.Tags.Add(new TagsModel() { TagName = Tag });
+            DataBase.SaveChanges();
+        }
+
+        void TagAddToTask(string Tag, int TaskId)
+        {
+            TagsModel CurrentTag = DataBase.Tags.Where(x => x.TagName == Tag).FirstOrDefault();
+            CurrentTag.Count += 1;
+            DataBase.TaskTag.Add(new TaskTagModel() { Tag = CurrentTag.Id, TaskId = TaskId });
+            DataBase.SaveChanges();
         }
     }
 }

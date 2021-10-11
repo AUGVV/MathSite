@@ -14,7 +14,7 @@ namespace MathSite.Functions
         public CreateUserConfig(string User, TasksContext context)
         {
             DataBase = context;
-            DataBase.UserConfig.Add(new UserConfigModel() { User = User, Region = "en", DarkTheme = 0, IsAdmin = 0 });
+            DataBase.UserConfig.Add(new UserConfigModel() { User = User, Region = "en", isDark = false, isAdmin = false });
             DataBase.SaveChanges();
         }
     }

@@ -38,7 +38,7 @@ namespace MathSite.Functions
         IQueryable<TasksModel> SearchInText(string SearchText)
         {
              IEnumerable<TasksModel> TasksResult = DataBase.Tasks.Where(x => EF.Functions.FreeText(x.TaskName, SearchText) || EF.Functions.FreeText(x.Condition, SearchText) || EF.Functions.FreeText(x.Type, SearchText));
-             IEnumerable<TasksModel> CommentsResult = DataBase.Comments.Where(x => EF.Functions.FreeText(x.Text, SearchText)).Join(DataBase.Tasks, f => f.TaskId, t => t.Id, (f, t) => new TasksModel() { Id = t.Id, Type = t.Type, TaskName = t.TaskName, IsDeleted = t.IsDeleted });
+             IEnumerable<TasksModel> CommentsResult = DataBase.Comments.Where(x => EF.Functions.FreeText(x.Text, SearchText)).Join(DataBase.Tasks, f => f.TaskId, t => t.Id, (f, t) => new TasksModel() { Id = t.Id, Type = t.Type, TaskName = t.TaskName, isDeleted = t.isDeleted });
              return (TasksResult.Concat(CommentsResult)).AsQueryable();
         }
     }

@@ -12,7 +12,7 @@ namespace MathSite.Models
         public int Rating { get; set; }
         public string TaskName { get; set; }
         public string Condition { get; set; }
-        public int IsDeleted { get; set; }
+        public bool isDeleted { get; set; }
         public DateTime AddDate { get; set; }
         public int SumVotes { get; set; }
         public int SumRating { get; set; }

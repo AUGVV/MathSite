@@ -21,20 +21,24 @@ namespace MathSite.Functions
     {
         private TasksContext DataBase;
 
-        public UploadPictures(string Images, int Id, TasksContext context)
+        public UploadPictures(TasksContext context)
         {
-            DataBase = context;
+            DataBase = context;   
+        }
+        
+        public void Upload(int TaskId, string Images)
+        {
             string[] ImageList = Images.Split("|image|");
             foreach (string image in ImageList)
             {
                 if (image.Length != 0)
                 {
-                    Uploader(image, Id);
+                    UploadToImgbb(TaskId, image);
                 }
             }
         }
 
-        public void Uploader(string image, int id)
+        private void UploadToImgbb(int TaskId, string image)
         {
             byte[] Response;
             string json = "";
@@ -53,13 +57,13 @@ namespace MathSite.Functions
             json.Root ResponseJson = JsonConvert.DeserializeObject<json.Root>(json);
             if (ResponseJson.data.url != null)
             {
-                ReferenceToBase(ResponseJson.data.url, ResponseJson.data.delete_url, id);
+                ReferenceToBase(ResponseJson.data.url, ResponseJson.data.delete_url, TaskId);
             }
         }
 
-        public void ReferenceToBase(string Url, string DeleteUrl, int Taskid)
+        private void ReferenceToBase(string Url, string DeleteUrl, int TaskId)
         {
-            DataBase.PicturesRef.Add(new PictureRefModel() { Reference = Url, TaskId = Taskid, DeleteReference = DeleteUrl });
+            DataBase.PicturesRef.Add(new PictureRefModel() { Reference = Url, TaskId = TaskId, DeleteReference = DeleteUrl });
             DataBase.SaveChanges();
         }
     }

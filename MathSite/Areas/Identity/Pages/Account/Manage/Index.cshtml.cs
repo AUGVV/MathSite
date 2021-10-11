@@ -42,8 +42,8 @@ namespace MathSite.Areas.Identity.Pages.Account.Manage
         {
             var userName = await _userManager.GetUserNameAsync(user);
             var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
-            int AnsweredCount = db.UserTaskState.Where(x => x.UserName == userName && x.Answered == 1).Count();
-            int VotedCount = db.UserTaskState.Where(x => x.UserName == userName && x.Voted == 1).Count();
+            int AnsweredCount = db.UserTaskState.Where(x => x.UserName == userName && x.isAnswered == true).Count();
+            int VotedCount = db.UserTaskState.Where(x => x.UserName == userName && x.isVoted == true).Count();
             int CreatedTasks = db.Tasks.Where(x => x.Author == userName).Count();
             int SumAllRatings = db.Tasks.Where(x => x.Author == userName).Sum(x => x.SumRating);
             int SumAllVotes = db.Tasks.Where(x => x.Author == userName).Sum(x => x.SumVotes);

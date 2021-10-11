@@ -9,8 +9,10 @@ namespace MathSite.Models
     {
         public int Id { get; set; }
         public string Region { get; set; }
-        public int DarkTheme { get; set; }
-        public int IsAdmin { get; set; }
+        public bool isDark { get; set; }
+        public bool isAdmin { get; set; }
         public string User { get; set; }
+
+        public bool isBaned { get; set; }
     }
 }

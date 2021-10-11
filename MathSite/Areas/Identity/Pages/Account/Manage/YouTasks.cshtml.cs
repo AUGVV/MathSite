@@ -12,49 +12,54 @@ namespace MathSite.Areas.Identity.Pages.Account.Manage
 {
     public class YouTasksModel : PageModel
     {
-
         private TasksContext DataBase;
         public List<TasksModel> Tasks { get; set; }
         public SelectList MathTheme { get; set; }
 
-        private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly SignInManager<IdentityUser> SignInManager;
 
-        public YouTasksModel(TasksContext TasksContext, SignInManager<IdentityUser> signInManager)
+        public YouTasksModel(TasksContext TasksContext, SignInManager<IdentityUser> SignInManager)
         {
             DataBase = TasksContext;
-            _signInManager = signInManager;
+            this.SignInManager = SignInManager;
         }
               
-        public void OnGet(string Search, Sort Sort = Sort.TaskNameAsc)
+        public void OnGet(string Search, SortTasks Sort = SortTasks.TaskNameAsc)
         {
             ViewData["SearchSave"] = Search;
             MathTheme = CreateMathList();
             ViewListCreate(Sort, Search);
         }
 
-        public IActionResult OnPost(string act, string Search, int ChoiseId, Sort Sort = Sort.TaskNameAsc)
+        public IActionResult OnPost(string PageAct, int ChoisedId, string Search, SortTasks Sort = SortTasks.TaskNameAsc)
         {
-            if (act == "create")
+            if (PageAct == "CreateTask")
             {
                 return Redirect("/Home/CreateTask");
             }
-            else if(act == "DeleteTask")
+            else if(PageAct == "DeleteTask")
             {
-                TasksModel Task = DataBase.Tasks.Where(x => x.Id == ChoiseId).FirstOrDefault();
-                Task.IsDeleted = 1;
-                DataBase.SaveChanges();
+                ViewData["SortSave"] = Sort;
+                DeleteTask(ChoisedId);
             }
-            else if (act == "EditTask")
+            else if (PageAct == "EditTask")
             {
-                return Redirect($"/Home/EditTaskPage?CurrentId={ChoiseId}");
+                return Redirect($"/Home/EditTaskPage?CurrentId={ChoisedId}");
             }
-            else if (act == "ShowTask")
+            else if (PageAct == "ShowTask")
             {
-                return Redirect($"/Home/TaskSolve?CurrentId={ChoiseId}");
+                return Redirect($"/Home/TaskSolve?CurrentId={ChoisedId}");
             }
             MathTheme = CreateMathList();
             ViewListCreate(Sort, Search);
             return Page();
+        }
+
+        void DeleteTask(int ChoisedId)
+        {  
+            TasksModel Task = DataBase.Tasks.Where(x => x.Id == ChoisedId).FirstOrDefault();
+            Task.isDeleted = true;
+            DataBase.SaveChanges();
         }
 
         SelectList CreateMathList()
@@ -68,7 +73,7 @@ namespace MathSite.Areas.Identity.Pages.Account.Manage
             return new SelectList(MathTheme, "Theme", "Theme");
         }
 
-        public enum Sort
+        public enum SortTasks
         {
             TaskNameAsc,
             TaskNameDesc,
@@ -78,25 +83,25 @@ namespace MathSite.Areas.Identity.Pages.Account.Manage
             RaitingDesc,
         }
 
-        void ViewListCreate(Sort Sort, string Search = "Все")
+        void ViewListCreate(SortTasks Sort, string Search = "Все")
         {
-                Tasks = TableSort(DataBase.Tasks.Where(x => x.Author == _signInManager.Context.User.Identity.Name && x.IsDeleted == 0).ToList(), Sort, Search);
+                Tasks = TableSort(DataBase.Tasks.Where(x => x.Author == SignInManager.Context.User.Identity.Name && x.isDeleted == false).ToList(), Sort, Search);
         }
 
-        private List<TasksModel> TableSort(List<TasksModel> ForSort, Sort Sort, string Search)
+        private List<TasksModel> TableSort(List<TasksModel> ForSort, SortTasks Sort, string Search)
         {
-            ViewData["TaskName"] = Sort == Sort.TaskNameAsc ? Sort.TaskNameDesc : Sort.TaskNameAsc;
-            ViewData["Condition"] = Sort == Sort.ConditionAsc ? Sort.ConditionDesc : Sort.ConditionAsc;
-            ViewData["Rating"] = Sort == Sort.RaitingAsc ? Sort.RaitingDesc : Sort.RaitingAsc;
+            ViewData["TaskName"] = Sort == SortTasks.TaskNameAsc ? SortTasks.TaskNameDesc : SortTasks.TaskNameAsc;
+            ViewData["Condition"] = Sort == SortTasks.ConditionAsc ? SortTasks.ConditionDesc : SortTasks.ConditionAsc;
+            ViewData["Rating"] = Sort == SortTasks.RaitingAsc ? SortTasks.RaitingDesc : SortTasks.RaitingAsc;
 
             ForSort = Sort switch
             {
-                Sort.TaskNameDesc => ForSort.OrderByDescending(s => s.TaskName).ToList(),
-                Sort.ConditionAsc => ForSort.OrderBy(s => s.Condition).ToList(),
-                Sort.ConditionDesc => ForSort.OrderByDescending(s => s.Condition).ToList(),
-                Sort.RaitingAsc => ForSort.OrderBy(s => s.Rating).ToList(),
-                Sort.RaitingDesc => ForSort.OrderByDescending(s => s.Rating).ToList(),
-                Sort.TaskNameAsc => ForSort.OrderBy(s => s.TaskName).ToList(),
+                SortTasks.TaskNameDesc => ForSort.OrderByDescending(s => s.TaskName).ToList(),
+                SortTasks.ConditionAsc => ForSort.OrderBy(s => s.Condition).ToList(),
+                SortTasks.ConditionDesc => ForSort.OrderByDescending(s => s.Condition).ToList(),
+                SortTasks.RaitingAsc => ForSort.OrderBy(s => s.Rating).ToList(),
+                SortTasks.RaitingDesc => ForSort.OrderByDescending(s => s.Rating).ToList(),
+                SortTasks.TaskNameAsc => ForSort.OrderBy(s => s.TaskName).ToList(),
             };
             if (Search != "Все" && Search != null)
             {

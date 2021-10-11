@@ -1,5 +1,6 @@
 ﻿@page
 @model MathSite.Areas.Identity.Pages.Account.Manage.Admin
 
-    <b>Ночной режим</b>
-    <br>
+<form method="get">
+    <label class="control-label">Пользователь:</label>  <select name="User" asp-items="Model.UsersList"></select><button type="submit" class="btn btn-primary btn-filter">Показать</button>
+</form>

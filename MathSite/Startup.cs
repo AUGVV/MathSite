@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI;
 using Microsoft.AspNetCore.Localization;
+using Microsoft.Azure.KeyVault;
+using Microsoft.Azure.Services.AppAuthentication;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -29,6 +31,16 @@ namespace MathSite
         }
 
         public IConfiguration Configuration { get; }
+
+        string TakeSecretKey(string name, string code)
+        {
+            var KeyVaultUrl = $"https://task4vault.vault.azure.net/secrets/" + name + "/" + code;
+            AzureServiceTokenProvider azureServiceTokenProvider = new AzureServiceTokenProvider();
+            KeyVaultClient keyVaultClient = new KeyVaultClient(new KeyVaultClient.AuthenticationCallback(azureServiceTokenProvider.KeyVaultTokenCallback));
+            var secret = keyVaultClient.GetSecretAsync(KeyVaultUrl).Result.Value;
+            Debug.WriteLine(secret);
+            return secret;
+        }
 
         public void ConfigureServices(IServiceCollection services)
         {

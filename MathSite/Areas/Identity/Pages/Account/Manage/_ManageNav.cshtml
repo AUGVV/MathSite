@@ -7,7 +7,7 @@
 @inject IViewLocalizer Localizer
 @{
     var hasExternalLogins = (await SignInManager.GetExternalAuthenticationSchemesAsync()).Any();
-    int IsAdmin = DataBase.UserConfig.Where(x => x.User == SignInManager.Context.User.Identity.Name).FirstOrDefault().IsAdmin;
+    bool isAdmin = DataBase.UserConfig.Where(x => x.User == SignInManager.Context.User.Identity.Name).FirstOrDefault().isAdmin;
 
 
 }
@@ -15,7 +15,7 @@
     <li class="nav-item"><a class="nav-link @ManageNavPages.IndexNavClass(ViewContext)" id="profile" asp-page="./Index">@Localizer["Profile"]</a></li>
     <li class="nav-item"><a class="nav-link @ManageNavPages.EmailNavClass(ViewContext)" id="email" asp-page="./Email">@Localizer["Email"]</a></li>
     <li class="nav-item"><a class="nav-link @ManageNavPages.YouTasksNavClass(ViewContext)" id="tasks" asp-page="./YouTasks">@Localizer["YouTasks"]</a></li>
-    @if (IsAdmin == 1)
+    @if (isAdmin)
     {
      <li class="nav-item"><a class="nav-link @ManageNavPages.AdminNavClass(ViewContext)" id="Admin" asp-page="./Admin">@Localizer["Admin"]</a></li>
     }

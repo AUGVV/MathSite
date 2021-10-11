@@ -14,7 +14,7 @@
 </div><br><br>
 @foreach (var item in Model)
 {
-    if (item.IsDeleted == 0)
+    if (item.isDeleted == false)
     {
         <p><a href="/Home/TaskSolve?CurrentId=@item.Id">"@ViewData["SearchText"]" &#160 @Localizer["Finded"] &#160 @item.TaskName</a><br>@Localizer["Type"] &#160 @item.Type</p>
     }

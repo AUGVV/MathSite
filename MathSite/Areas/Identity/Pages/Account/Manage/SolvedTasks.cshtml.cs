@@ -18,33 +18,31 @@ namespace MathSite.Areas.Identity.Pages.Account.Manage
 
         public SelectList MathTheme { get; set; }
 
-        private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly SignInManager<IdentityUser> SignInManager;
 
-        public SolvedTasksModel(TasksContext TasksContext, SignInManager<IdentityUser> signInManager)
+        public SolvedTasksModel(TasksContext TasksContext, SignInManager<IdentityUser> SignInManager)
         {
             DataBase = TasksContext;
-            _signInManager = signInManager;
+            this.SignInManager = SignInManager;
         }
               
-        public void OnGet(string Search, Sort Sort = Sort.TaskNameAsc)
+        public void OnGet(string Search, SortTasks Sort = SortTasks.TaskNameAsc)
         {
             ViewData["SearchSave"] = Search;
             MathTheme = CreateMathList();
             ViewListCreate(Sort, Search);
         }
 
-        public IActionResult OnPost(string act, string Search, int ChoiseId, Sort Sort = Sort.TaskNameAsc)
+        public IActionResult OnPost(string PageAct, int ChoisedId)
         {
-            if (act == "ShowTask")
+            if (PageAct == "ShowTask")
             {
-                return Redirect($"/Home/TaskSolve?CurrentId={ChoiseId}");
+                return Redirect($"/Home/TaskSolve?CurrentId={ChoisedId}");
             }
-            ViewListCreate(Sort, Search);
-            MathTheme = CreateMathList();
             return Page();
         }
 
-        public enum Sort
+        public enum SortTasks
         {
             TaskNameAsc,
             TaskNameDesc,
@@ -54,9 +52,9 @@ namespace MathSite.Areas.Identity.Pages.Account.Manage
             TypeDesc,
         }
 
-        void ViewListCreate(Sort Sort, string Search = "Все")
+        void ViewListCreate(SortTasks Sort, string Search = "Все")
         {
-            Tasks = TableSort(DataBase.UserTaskState.Where(x => x.UserName == _signInManager.Context.User.Identity.Name).Join(DataBase.Tasks, f => f.TaskId, t => t.Id, (f, t) => new TasksModel() { Id = f.TaskId, TaskName = t.TaskName, Condition = t.Condition, Type = t.Type }).ToList(), Sort, Search);
+            Tasks = TableSort(DataBase.UserTaskState.Where(x => x.UserName == SignInManager.Context.User.Identity.Name).Join(DataBase.Tasks, f => f.TaskId, t => t.Id, (f, t) => new TasksModel() { Id = f.TaskId, TaskName = t.TaskName, Condition = t.Condition, Type = t.Type }).ToList(), Sort, Search);
         }
 
         SelectList CreateMathList()
@@ -70,20 +68,21 @@ namespace MathSite.Areas.Identity.Pages.Account.Manage
             return new SelectList(MathTheme, "Theme", "Theme");
         }
 
-        private List<TasksModel> TableSort(List<TasksModel> ForSort, Sort Sort, string Search)
+        private List<TasksModel> TableSort(List<TasksModel> ForSort, SortTasks Sort, string Search)
         {
-            ViewData["TaskName"] = Sort == Sort.TaskNameAsc ? Sort.TaskNameDesc : Sort.TaskNameAsc;
-            ViewData["Condition"] = Sort == Sort.ConditionAsc ? Sort.ConditionDesc : Sort.ConditionAsc;
-            ViewData["Type"] = Sort == Sort.TypeAsc ? Sort.TypeDesc : Sort.TypeAsc;
+            ViewData["TaskName"] = Sort == SortTasks.TaskNameAsc ? SortTasks.TaskNameDesc : SortTasks.TaskNameAsc;
+            ViewData["Condition"] = Sort == SortTasks.ConditionAsc ? SortTasks.ConditionDesc : SortTasks.ConditionAsc;
+            ViewData["Type"] = Sort == SortTasks.TypeAsc ? SortTasks.TypeDesc : SortTasks.TypeAsc;
 
             ForSort = Sort switch
             {
-                Sort.TaskNameDesc => ForSort.OrderByDescending(s => s.TaskName).ToList(),
-                Sort.ConditionAsc => ForSort.OrderBy(s => s.Condition).ToList(),
-                Sort.ConditionDesc => ForSort.OrderByDescending(s => s.Condition).ToList(),
-                Sort.TypeAsc => ForSort.OrderBy(s => s.Type).ToList(),
-                Sort.TypeDesc => ForSort.OrderByDescending(s => s.Type).ToList(),
-                Sort.TaskNameAsc => ForSort.OrderBy(s => s.TaskName).ToList(),
+                SortTasks.TaskNameDesc => ForSort.OrderByDescending(s => s.TaskName).ToList(),
+                SortTasks.ConditionAsc => ForSort.OrderBy(s => s.Condition).ToList(),
+                SortTasks.ConditionDesc => ForSort.OrderByDescending(s => s.Condition).ToList(),
+                SortTasks.TypeAsc => ForSort.OrderBy(s => s.Type).ToList(),
+                SortTasks.TypeDesc => ForSort.OrderByDescending(s => s.Type).ToList(),
+                SortTasks.TaskNameAsc => ForSort.OrderBy(s => s.TaskName).ToList(),
+                _ => throw new NotImplementedException(),
             };
             if (Search != "Все" && Search != null)
             {
@@ -91,8 +90,5 @@ namespace MathSite.Areas.Identity.Pages.Account.Manage
             }
             return ForSort;
         }
-
-
-
     }
 }

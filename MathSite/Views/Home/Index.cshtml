@@ -25,7 +25,7 @@
                 </tr>
                 @foreach (var item in Model.NewTasks)
                 {
-                    <tr><td>@item.TaskName</td><td>@item.Type</td><td>@item.AddDate</td><td><button type="submit" asp-route-Id="@item.Id" class="btn btn-primary">@Localizer["Solve"]</button></td></tr>
+                    <tr><td>@item.TaskName</td><td>@item.Type</td><td>@item.AddDate</td><td><button type="submit" asp-route-ChoisedId="@item.Id" class="btn btn-primary">@Localizer["Solve"]</button></td></tr>
                 }
             </table>
             <table hidden class="table" id="raiting-table">
@@ -36,13 +36,13 @@
                 </tr>
                 @foreach (var item in Model.TopTasks)
                 {
-                    <tr><td>@item.TaskName</td><td>@item.Type</td><td>@item.Rating /5</td><td><button type="submit" asp-route-Id="@item.Id" class="btn btn-primary">@Localizer["Solve"]</button></td></tr>
+                    <tr><td>@item.TaskName</td><td>@item.Type</td><td>@item.Rating /5</td><td><button type="submit" asp-route-ChoisedId="@item.Id" class="btn btn-primary">@Localizer["Solve"]</button></td></tr>
                 }
             </table><br><br>
             <div class="tags">
                 @foreach (var item in Model.Tags)
                 {
-                    <button id="raitings" type="submit" asp-route-tag="@item.Id" class="tag-button">#@item.TagName (@item.Count)</button>
+                    <button id="raitings" type="submit" asp-route-ChoisedTag="@item.Id" class="tag-button">#@item.TagName (@item.Count)</button>
                 }
             </div><br><br>
         </form>

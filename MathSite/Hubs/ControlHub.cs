@@ -29,15 +29,11 @@ namespace MathSite.Hubs
                 CommentsModel Comment = DataBase.Comments.Where(x => x.Id == CommentId).FirstOrDefault();
                 if (DisOrLike == "like")
                 {
-                    Comment.Like += 1;
-                    DataBase.SaveChanges();
-                    NewLikeCount = Comment.Like;
+                    NewLikeCount = AddLike(Comment);
                 }
                 else if(DisOrLike == "dislike")
                 {
-                    Comment.Dislike += 1;
-                    DataBase.SaveChanges();
-                    NewLikeCount = Comment.Dislike;
+                    NewLikeCount = AddDislike(Comment);
                 }               
             }
             else
@@ -46,6 +42,21 @@ namespace MathSite.Hubs
             }    
             await Clients.All.SendAsync($"CommentLiked", CommentId, NewLikeCount, DisOrLike);
         }
+
+        int AddLike(CommentsModel Comment)
+        {
+            Comment.Like += 1;
+            DataBase.SaveChanges();
+            return Comment.Like;
+        }
+
+        int AddDislike(CommentsModel Comment)
+        {
+            Comment.Dislike += 1;
+            DataBase.SaveChanges();
+            return Comment.Dislike;
+        }
+
 
         public async Task NightMode(bool State)
         {
@@ -75,7 +86,7 @@ namespace MathSite.Hubs
             TasksModel CurrentTask = DataBase.Tasks.Where(x => x.Id == Convert.ToInt32(TaskId)).FirstOrDefault();
             CurrentTask = NewRaiting(CurrentTask.Rating, CurrentTask.SumRating + Grade, CurrentTask.SumVotes + 1, CurrentTask);
             UserTaskModel TaskState = DataBase.UserTaskState.Where(x => x.TaskId == Convert.ToInt32(TaskId) && x.UserName == UserName).FirstOrDefault();
-            TaskState.Voted = 1;
+            TaskState.isVoted = true;
             DataBase.SaveChanges();
             await Clients.Caller.SendAsync($"Raiting", CurrentTask.Rating);
         }
@@ -99,9 +110,9 @@ namespace MathSite.Hubs
                 if (Answer.Answer.ToLower() == CurrentAnswer.ToLower())
                 {
                     UserTaskModel TaskState = DataBase.UserTaskState.Where(x => x.TaskId == Convert.ToInt32(TaskId) && x.UserName == UserName).FirstOrDefault();
-                    if (TaskState.Answered == 0)
+                    if (!TaskState.isAnswered)
                     {
-                        TaskState.Answered = 1;
+                        TaskState.isAnswered = true;
                         DataBase.SaveChanges();
                     }
                     Result = true;
@@ -163,21 +174,39 @@ namespace MathSite.Hubs
                 DataBase.TaskTag.Remove(Tag);
             }
             DataBase.SaveChanges();
-            CreateTags TagsCreator = new CreateTags(NewTags, Id, DataBase);
+            ChangeTags(Id, NewTags);
             await Clients.Caller.SendAsync($"TagsChanged");
+        }
+
+        void ChangeTags(int TaskId, string NewTags)
+        {
+            CreateTags TagsCreator = new CreateTags(DataBase);
+            TagsCreator.Create(NewTags, TaskId);
         }
 
         public async Task ChangePictures(string TaskId, string NewPictures, string DeletePictures)
         {
             if (DeletePictures != "")
             {
-                _ = new DeletePictures(DeletePictures, DataBase);
+                DeleteTaskPictures(DeletePictures);
             }
             if (NewPictures != "")
             {
-                _ = new UploadPictures(NewPictures, Convert.ToInt32(TaskId), DataBase);
+                AddPictures(Convert.ToInt32(TaskId), NewPictures); 
             }
             await Clients.Caller.SendAsync($"PictureChanged");
+        }
+
+        void AddPictures(int TaskId, string Pictures)
+        {
+            UploadPictures UploadPictures = new UploadPictures(DataBase);
+            UploadPictures.Upload(TaskId, Pictures);
+        }
+
+        void DeleteTaskPictures(string Images)
+        {
+            DeletePictures DeletePictures = new DeletePictures(DataBase);
+            DeletePictures.Delete(Images);
         }
     }
 }

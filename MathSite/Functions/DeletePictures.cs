@@ -21,19 +21,22 @@ namespace MathSite.Functions
     {
         private TasksContext DataBase;
 
-        public DeletePictures(string ImagesId, TasksContext context)
+        public DeletePictures(TasksContext context)
         {
             DataBase = context;
+        } 
 
+        public void Delete(string ImagesId)
+        {
             string[] ImageIdList = ImagesId.Split("#");
 
             foreach (string Id in ImageIdList)
             {
-              int ImageId = Convert.ToInt32(Id);
-              PictureRefModel OldPicture = DataBase.PicturesRef.Where(x => x.Id == ImageId).FirstOrDefault();
+                int ImageId = Convert.ToInt32(Id);
+                PictureRefModel OldPicture = DataBase.PicturesRef.Where(x => x.Id == ImageId).FirstOrDefault();
                 DataBase.PicturesRef.Remove(OldPicture);
             }
             DataBase.SaveChanges();
-        } 
+        }
     }
 }

@@ -15,28 +15,28 @@ namespace MathSite.Areas.Identity.Pages.Account.Manage
     public class ChangeLanguageModel : PageModel
     {
 
-        private TasksContext Db;
+        private TasksContext DataBase;
 
-        private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly SignInManager<IdentityUser> SignInManager;
 
-   
-        public ChangeLanguageModel(TasksContext TasksContext, SignInManager<IdentityUser> signInManager)
+        public ChangeLanguageModel(TasksContext TasksContext, SignInManager<IdentityUser> SignInManager)
         {
-            Db = TasksContext;
-            _signInManager = signInManager;
+            DataBase = TasksContext;
+            this.SignInManager = SignInManager;
         }
 
-        public void OnGet()
+        public IActionResult OnPost(string Language)
         {
-        }
-
-        public IActionResult OnPost(string language)
-        {
-            string SingInAuthor = _signInManager.Context.User.Identity.Name;
-            Response.Cookies.Append(CookieRequestCultureProvider.DefaultCookieName, CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(language)));
-            LanguageChange languageChange = new LanguageChange(language, SingInAuthor, Db);
+            Response.Cookies.Append(CookieRequestCultureProvider.DefaultCookieName, CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(Language)));
+            ChangeLanguage(Language);
             return Redirect($"/Identity/Account/Manage/ChangeLanguage");
         }
-    }
 
+        void ChangeLanguage(string Language)
+        {
+            string SingInAuthor = SignInManager.Context.User.Identity.Name;
+            LanguageChange LanguageChange = new LanguageChange();
+            LanguageChange.ChangeLanguage(Language, SingInAuthor, DataBase);
+        }
+    }
 }

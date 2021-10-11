@@ -19,7 +19,7 @@
                 <td>@item.TaskName</td>
                 <td>@item.Condition</td>
                 <td>@item.Type</td>
-                <td><Button type="submit" asp-route-act="ShowTask" asp-route-ChoiseId=@item.Id class="btn btn-primary">@Localizer["View"]</Button></td>
+                <td><Button type="submit" asp-route-PageAct="ShowTask" asp-route-ChoisedId=@item.Id class="btn btn-primary">@Localizer["View"]</Button></td>
             </tr>
         }
     </table>

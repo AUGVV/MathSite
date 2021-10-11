@@ -24,47 +24,45 @@ namespace MathSite.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
-        private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly SignInManager<IdentityUser> SignInManager;
 
         private TasksContext DataBase;
 
-        public HomeController(ILogger<HomeController> logger, SignInManager<IdentityUser> signInManager, TasksContext context)
+        public HomeController(SignInManager<IdentityUser> SignInManager, TasksContext context)
         {
-            _logger = logger;
-            _signInManager = signInManager;
+            this.SignInManager = SignInManager;
             DataBase = context;
         }
 
-        public IActionResult Index(int? Tag, int? Id, string SearchText)
+        public IActionResult Index(int? ChoisedTag, int? ChoisedId, string SearchText)
         {
-            if (Id != null)
+            if (ChoisedId != null)
             {
-                return Redirect($"/Home/TaskSolve?CurrentId={Id}");
+                return Redirect($"/Home/TaskSolve?CurrentId={ChoisedId}");
             }
             else if (SearchText != null)
             {
                 return Redirect($"/Home/SearchPage?SearchText={SearchText}");
             }
-            else if (Tag != null)
+            else if (ChoisedTag != null)
             {
-                return Redirect($"/Home/SearchPage?Tag={Tag}");
+                return Redirect($"/Home/SearchPage?Tag={ChoisedTag}");
             }
 
             IndexModel indexModel = new()
             {
-                NewTasks = DataBase.Tasks.Where(x => x.IsDeleted != 1).OrderByDescending(x => x.AddDate).Take(10),
-                TopTasks = DataBase.Tasks.Where(x => x.IsDeleted != 1).OrderByDescending(x => x.Rating).Take(10),
+                NewTasks = DataBase.Tasks.Where(x => x.isDeleted != true).OrderByDescending(x => x.AddDate).Take(10),
+                TopTasks = DataBase.Tasks.Where(x => x.isDeleted != true).OrderByDescending(x => x.Rating).Take(10),
                 Tags = DataBase.Tags
             };
             return View(indexModel);
         }
 
         [Authorize]
-        public IActionResult CreateTask(string Act, string TaskName, string TaskCondition, string FirstAnswer, string SecondAnswer, string ThirdAnswer, string Tags, string images, string type)
+        public IActionResult CreateTask(string PageAct, string TaskName, string TaskCondition, string FirstAnswer, string SecondAnswer, string ThirdAnswer, string Tags, string images, string type)
         {
-            string SingInAuthor = _signInManager.Context.User.Identity.Name;
-            if (Act == "create")
+            string SingInAuthor = SignInManager.Context.User.Identity.Name;
+            if (PageAct == "create")
             {
                 TasksCreator tasksCreator = new TasksCreator(DataBase);
                 tasksCreator.TaskSave(SingInAuthor, TaskName, TaskCondition, FirstAnswer, SecondAnswer, ThirdAnswer, Tags, images, type);
@@ -104,18 +102,18 @@ namespace MathSite.Controllers
                 return Redirect("/Home/Index");
             }
 
-            string SingInAuthor = _signInManager.Context.User.Identity.Name;
-            bool IsAutorize = false;
+            string SingInAuthor = SignInManager.Context.User.Identity.Name;
+            bool isAutorize = false;
 
             if (SingInAuthor != null)
             {
-                IsAutorize = true;
+                isAutorize = true;
             }
-            ViewData["IsAutorize"] = IsAutorize;
+            ViewData["IsAutorize"] = isAutorize;
             ViewData["IsVoted"] = false;
             ViewData["Rating"] = 0;
 
-            if ((IsAutorize != false) && (DataBase.UserTaskState.Where(x => x.UserName == SingInAuthor && x.TaskId == CurrentId).FirstOrDefault() == null))
+            if ((isAutorize != false) && (DataBase.UserTaskState.Where(x => x.UserName == SingInAuthor && x.TaskId == CurrentId).FirstOrDefault() == null))
             {
                 DataBase.UserTaskState.Add(new UserTaskModel() { UserName = SingInAuthor, TaskId = (int)CurrentId });
                 DataBase.SaveChanges();
@@ -123,7 +121,7 @@ namespace MathSite.Controllers
 
             List<PictureRefModel> Pictures = DataBase.PicturesRef.Where(x => x.TaskId == CurrentId)?.ToList();
 
-            if ((IsAutorize != false) && (DataBase.UserTaskState.Where(x => x.UserName == SingInAuthor && x.TaskId == CurrentId).FirstOrDefault().Voted == 1))
+            if ((isAutorize != false) && (DataBase.UserTaskState.Where(x => x.UserName == SingInAuthor && x.TaskId == CurrentId).FirstOrDefault().isVoted == true))
             {
                 ViewData["IsVoted"] = true;
                 ViewData["Rating"] = CurrentTask.Rating;
@@ -132,7 +130,7 @@ namespace MathSite.Controllers
             ViewData["TaskType"] = CurrentTask.Type;
             ViewData["CurrentTask"] = CurrentTask.TaskName;
             ViewData["CurrentCondition"] = CurrentTask.Condition;
-            ViewData["UserName"] = _signInManager.Context.User.Identity.Name;
+            ViewData["UserName"] = SignInManager.Context.User.Identity.Name;
             ViewData["Id"] = CurrentId;
             ViewData["PicturesCount"] = Pictures.Count;
 
@@ -152,9 +150,9 @@ namespace MathSite.Controllers
         }
 
         [Authorize]
-        public IActionResult EditTaskPage(int? CurrentId, int? Tag, string SearchText)
+        public IActionResult EditTaskPage(int? CurrentId)
         {
-            string SingInAuthor = _signInManager.Context.User.Identity.Name;
+            string SingInAuthor = SignInManager.Context.User.Identity.Name;
 
             TasksModel CurrentTask = DataBase.Tasks.Where(x => x.Id == CurrentId).FirstOrDefault();
 
