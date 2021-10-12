@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Microsoft.Net.Http.Headers;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -18,10 +19,12 @@ using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace MathSite.Controllers
 {
+   
     public class HomeController : Controller
     {
         private readonly SignInManager<IdentityUser> SignInManager;
@@ -34,6 +37,7 @@ namespace MathSite.Controllers
             DataBase = context;
         }
 
+
         public IActionResult Index(int? ChoisedTag, int? ChoisedId, string SearchText)
         {
             if (ChoisedId != null)
@@ -42,7 +46,7 @@ namespace MathSite.Controllers
             }
             else if (SearchText != null)
             {
-                return Redirect($"/Home/SearchPage?SearchText={SearchText}");
+                return LocalRedirect($"/Home/SearchPage?SearchText={StringToHex(SearchText)}");
             }
             else if (ChoisedTag != null)
             {
@@ -57,6 +61,12 @@ namespace MathSite.Controllers
             };
             return View(indexModel);
         }
+
+        string StringToHex(string Word)
+        {
+            return Uri.EscapeDataString(Word);
+        }
+
 
         [Authorize]
         public IActionResult CreateTask(string PageAct, string TaskName, string TaskCondition, string FirstAnswer, string SecondAnswer, string ThirdAnswer, string Tags, string images, string type)
@@ -92,7 +102,7 @@ namespace MathSite.Controllers
         {
             if (SearchText != null)
             {
-                return Redirect($"/Home/SearchPage?SearchText={SearchText}");
+                return Redirect($"/Home/SearchPage?SearchText={StringToHex(SearchText)}");
             }
 
             TasksModel CurrentTask = DataBase.Tasks.Where(x => x.Id == CurrentId).FirstOrDefault();
@@ -179,11 +189,11 @@ namespace MathSite.Controllers
         }
 
         public IActionResult SearchPage(int? Tag, string SearchText)
-        {
+        {      
             PagesSearch pagesSearch = new PagesSearch(DataBase);
-            IQueryable<TasksModel> Results = pagesSearch.GetResult(Tag, SearchText);
+            IQueryable<TasksModel> Results = pagesSearch.GetResult(Tag, HexToString(SearchText));
             ViewData["SearchText"] = pagesSearch.SearchViewData;
-            if (Tag != null || SearchText != null)
+            if (Tag != null || HexToString(SearchText) != null)
             {
                 return View(Results);
             }
@@ -191,6 +201,11 @@ namespace MathSite.Controllers
             {
                 return View();
             }
+        }
+
+        string HexToString(string Word)
+        {
+            return Uri.UnescapeDataString(Word);
         }
     }
 }
