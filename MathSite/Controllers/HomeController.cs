@@ -62,12 +62,6 @@ namespace MathSite.Controllers
             return View(indexModel);
         }
 
-        string StringToHex(string Word)
-        {
-            return Uri.EscapeDataString(Word);
-        }
-
-
         [Authorize]
         public IActionResult CreateTask(string PageAct, string TaskName, string TaskCondition, string FirstAnswer, string SecondAnswer, string ThirdAnswer, string Tags, string images, string type)
         {
@@ -166,7 +160,7 @@ namespace MathSite.Controllers
 
             TasksModel CurrentTask = DataBase.Tasks.Where(x => x.Id == CurrentId).FirstOrDefault();
 
-            if (CurrentTask == null || CurrentTask.Author != SingInAuthor)
+            if (CurrentTask == null || (CurrentTask.Author != SingInAuthor && !DataBase.UserConfig.Where(x=>x.User == SingInAuthor).FirstOrDefault().isAdmin))
             {
                     return Redirect($"/Identity/Account/Manage/YouTasks");
             }
@@ -203,9 +197,18 @@ namespace MathSite.Controllers
             }
         }
 
+        string StringToHex(string Word)
+        {
+            return Uri.EscapeDataString(Word);
+        }
+
         string HexToString(string Word)
         {
-            return Uri.UnescapeDataString(Word);
+            if (Word != null)
+            {
+                return Uri.UnescapeDataString(Word);
+            }
+            return null;
         }
     }
 }

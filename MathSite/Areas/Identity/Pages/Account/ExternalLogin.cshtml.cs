@@ -92,7 +92,13 @@ namespace MathSite.Areas.Identity.Pages.Account
             var result = await _signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, isPersistent: false, bypassTwoFactor : true);
             if (result.Succeeded)
             {
-                string region = DataBase.UserConfig.Where(x => x.User == info.Principal.Identity.Name).FirstOrDefault().Region;
+                UserConfigModel CurrentUser = DataBase.UserConfig.Where(x => x.User == info.Principal.Identity.Name).FirstOrDefault();
+                if (CurrentUser.isBaned)
+                {
+                    _ = _signInManager.SignOutAsync();
+                    return Redirect("/Home/BannedPage");
+                }
+                string region = CurrentUser.Region;
                 Response.Cookies.Append(CookieRequestCultureProvider.DefaultCookieName, CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(region)));
                 _logger.LogInformation("{Name} logged in with {LoginProvider} provider.", info.Principal.Identity.Name, info.LoginProvider);
                 return LocalRedirect(returnUrl);

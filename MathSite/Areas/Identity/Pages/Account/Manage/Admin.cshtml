@@ -1,6 +1,74 @@
 ﻿@page
 @model MathSite.Areas.Identity.Pages.Account.Manage.Admin
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
+
+<link rel="stylesheet" type="text/css" href="/css/EditTask.css">
 
 <form method="get">
-    <label class="control-label">Пользователь:</label>  <select name="User" asp-items="Model.UsersList"></select><button type="submit" class="btn btn-primary btn-filter">Показать</button>
+    <label class="control-label">@Localizer["CurrentUser"]</label>  <select name="ChoisedUser" asp-items="Model.UsersList"></select><button type="submit" class="btn btn-primary btn-filter">@Localizer["ShowUser"]</button>
 </form>
+
+@if ((bool)ViewData["isSelectedUser"])
+{
+<div class="edit-block">
+    <b>@Localizer["UserForAdministrating"]</b><br>
+    @ViewData["SelectUser"]<br><br>
+
+    <b>@Localizer["Statistic"]</b><br>
+    @Localizer["TasksSolved"] @ViewData["AnsweredCount"]<br>
+    @Localizer["TasksCreated"] @ViewData["CreatedTasks"]<br>
+    @Localizer["TasksVoted"] @ViewData["VotedCount"]<br>
+    @Localizer["TasksRaiting"] @ViewData["ResultRaiting"]<br><br>
+    @if ((bool)ViewData["isBan"])
+    {
+        <div class="alert alert-danger">@Localizer["UserBanned"]</div>
+        <form method="post">
+            <Button type="submit" asp-route-PageAct="UnbanUser" asp-route-ChoisedUser=@ViewData["SelectUser"] asp-route-SearchTheme=@ViewData["SearchSave"] asp-route-Sort=@ViewData["SortSave"] class="btn btn-primary">@Localizer["Unban"]</Button>
+        </form>
+    }
+    else if (!(bool)ViewData["isBan"])
+    {
+        <div class="alert alert-primary">@Localizer["UserActive"]</div>
+        <form method="post">
+            <Button type="submit" asp-route-PageAct="BanUser" asp-route-ChoisedUser=@ViewData["SelectUser"] asp-route-SearchTheme=@ViewData["SearchSave"] asp-route-Sort=@ViewData["SortSave"] class="btn btn-primary">@Localizer["Ban"]</Button>
+        </form>
+        if ((bool)ViewData["DoNotBanYorself"])
+        {
+            <br><div class="alert alert-danger">@Localizer["BanYourself"]</div>
+        }
+
+    }
+</div><br><br>
+              <div class="edit-block">
+                  <b>@Localizer["UserTasksList"]</b><br>
+                  <form method="post">
+                      <label class="control-label">@Localizer["Theme"]</label><select name="SearchTheme" asp-items="Model.MathThemes"></select><button ChoisedUser=@ViewData["SelectUser"] type="submit" class="btn btn-primary btn-filter">@Localizer["Search"]</button>
+                  </form>
+                  <form method="post">
+                      <table class="table">
+                          <tr>
+                              <th><a asp-route-Sort="@ViewBag.TaskName" asp-route-SearchTheme=@ViewData["SearchSave"] asp-route-ChoisedUser=@ViewData["SelectUser"]>@Localizer["TaskName"]</a></th>
+                              <th><a asp-route-Sort="@ViewBag.Condition" asp-route-SearchTheme=@ViewData["SearchSave"] asp-route-ChoisedUser=@ViewData["SelectUser"]>@Localizer["Condition"]</a></th>
+                              <th><a asp-route-Sort="@ViewBag.Rating" asp-route-SearchTheme=@ViewData["SearchSave"] asp-route-ChoisedUser=@ViewData["SelectUser"]>@Localizer["Raiting"]</a></th>
+                          </tr>
+                          @foreach (var item in Model.UserTasksForView)
+                          {
+                              <tr>
+                                  <td>@item.TaskName</td>
+                                  <td>@item.Condition</td>
+                                  <td>@item.Rating</td>
+                                  <td><Button type="submit" asp-route-PageAct="ShowTask" asp-route-ChoisedId=@item.Id class="btn btn-primary">@Localizer["View"]</Button></td>
+                                  <td><Button type="submit" asp-route-PageAct="EditTask" asp-route-ChoisedId=@item.Id class="btn btn-primary">@Localizer["Edit"]</Button></td>
+                                  <td><Button type="submit" asp-route-PageAct="DeleteTask" asp-route-ChoisedId=@item.Id asp-route-SearchTheme=@ViewData["SearchSave"] asp-route-Sort=@ViewData["SortSave"] class="btn btn-primary">@Localizer["Delete"]</Button></td>
+                              </tr>
+                          }
+                      </table>
+                  </form>
+              </div>
+}
+
+
+
+
+

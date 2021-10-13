@@ -102,6 +102,7 @@ namespace MathSite.Areas.Identity.Pages.Account.Manage
                 SortTasks.RaitingAsc => ForSort.OrderBy(s => s.Rating).ToList(),
                 SortTasks.RaitingDesc => ForSort.OrderByDescending(s => s.Rating).ToList(),
                 SortTasks.TaskNameAsc => ForSort.OrderBy(s => s.TaskName).ToList(),
+                _ => throw new NotImplementedException(),
             };
             if (Search != "Все" && Search != null)
             {

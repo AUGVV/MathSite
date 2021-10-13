@@ -90,9 +90,16 @@ namespace MathSite.Areas.Identity.Pages.Account
                 var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
+                    UserConfigModel CurrentUser = DataBase.UserConfig.Where(x => x.User == Input.Email).FirstOrDefault();
                     _logger.LogInformation("User logged in.");
-                    string region = DataBase.UserConfig.Where(x => x.User == Input.Email).FirstOrDefault().Region;
+                    if (CurrentUser.isBaned)
+                    {
+                        _ = _signInManager.SignOutAsync();
+                        return Redirect("/Home/BannedPage");
+                    }
+                    string region = CurrentUser.Region;
                     Response.Cookies.Append(CookieRequestCultureProvider.DefaultCookieName, CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(region)));
+    
                     return LocalRedirect(returnUrl);
                 }
                 if (result.RequiresTwoFactor)

@@ -14,13 +14,13 @@ namespace MathSite.Areas.Identity.Pages.Account.Manage
     {
         private readonly UserManager<IdentityUser> _userManager;
         private readonly SignInManager<IdentityUser> _signInManager;
-        private TasksContext db;
+        private TasksContext DataBase;
 
         public IndexModel(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, TasksContext context)
         {
             _userManager = userManager;
             _signInManager = signInManager;
-            db = context;
+            DataBase = context;
         }
 
         public string Username { get; set; }
@@ -42,26 +42,62 @@ namespace MathSite.Areas.Identity.Pages.Account.Manage
         {
             var userName = await _userManager.GetUserNameAsync(user);
             var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
-            int AnsweredCount = db.UserTaskState.Where(x => x.UserName == userName && x.isAnswered == true).Count();
-            int VotedCount = db.UserTaskState.Where(x => x.UserName == userName && x.isVoted == true).Count();
-            int CreatedTasks = db.Tasks.Where(x => x.Author == userName).Count();
-            int SumAllRatings = db.Tasks.Where(x => x.Author == userName).Sum(x => x.SumRating);
-            int SumAllVotes = db.Tasks.Where(x => x.Author == userName).Sum(x => x.SumVotes);
-            int ResultRaiting = 0;
-            if (SumAllRatings != 0 || SumAllVotes != 0)
-            {
-                 ResultRaiting = SumAllRatings / SumAllVotes;
-            }
-            ViewData["AnsweredCount"] = AnsweredCount;
-            ViewData["VotedCount"] = VotedCount;
-            ViewData["ResultRaiting"] = ResultRaiting;
-            ViewData["CreatedTasks"] = CreatedTasks;
+            IEnumerable<UserTaskModel> UserTaskState = DataBase.UserTaskState.Where(x => x.UserName == userName);
+            IEnumerable<TasksModel> UserTasks = DataBase.Tasks.Where(x => x.Author == userName);
+            GetUserInfo(UserTaskState, UserTasks);
+
             Username = userName;
 
             Input = new InputModel
             {
                 PhoneNumber = phoneNumber
             };
+        }
+
+        private void GetUserInfo(IEnumerable<UserTaskModel> UserTaskState, IEnumerable<TasksModel> UserTasks)
+        {
+            ViewData["AnsweredCount"] = GetAnswersCount(UserTaskState);
+            ViewData["VotedCount"] = GetVotedCount(UserTaskState);
+            ViewData["CreatedTasks"] = GetCreatedTasks(UserTasks);
+            ViewData["ResultRaiting"] = GetRating(UserTasks);
+        }
+
+        private int GetAnswersCount(IEnumerable<UserTaskModel> UserTaskState)
+        {
+            return UserTaskState.Where(x => x.isAnswered == true).Count();
+        }
+
+        private int GetVotedCount(IEnumerable<UserTaskModel> UserTaskState)
+        {
+            return UserTaskState.Where(x => x.isVoted == true).Count();
+        }
+
+        private int GetCreatedTasks(IEnumerable<TasksModel> UserTasks)
+        {
+            return UserTasks.Count();
+        }
+
+        private int GetRating(IEnumerable<TasksModel> UserTasks)
+        {
+            int AllRatings = GetAllRatings(UserTasks);
+            int AllVotes = GetAllVotes(UserTasks);
+
+            int ResultRaiting = 0;
+            if (AllRatings != 0 || AllVotes != 0)
+            {
+                ResultRaiting = AllRatings / AllVotes;
+            }
+            return ResultRaiting;
+        }
+
+        private int GetAllRatings(IEnumerable<TasksModel> UserTasks)
+        {
+            return UserTasks.Sum(x => x.SumRating);
+        }
+
+        private int GetAllVotes(IEnumerable<TasksModel> UserTasks)
+        {
+            return UserTasks.Sum(x => x.SumVotes);
         }
 
         public async Task<IActionResult> OnGetAsync()
