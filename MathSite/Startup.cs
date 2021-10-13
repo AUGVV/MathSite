@@ -4,23 +4,14 @@ using MathSite.Hubs;
 using MathSite.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI;
 using Microsoft.AspNetCore.Localization;
-using Microsoft.Azure.KeyVault;
-using Microsoft.Azure.Services.AppAuthentication;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace MathSite
 {
@@ -49,17 +40,16 @@ namespace MathSite
             services.AddDatabaseDeveloperPageExceptionFilter();
             services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<ApplicationDbContext>();
             services.AddControllersWithViews().AddViewLocalization();
-            services.AddAuthentication().AddFacebook(facebookOptions =>
+            services.AddAuthentication().AddFacebook(FacebookOptions =>
             {
-                 facebookOptions.AppId = AzureSecretKey.TakeSecretKey("FacebookAppID", "9e5eb1a22f324d83914e40c8a6907b60");
-                 facebookOptions.AppSecret = AzureSecretKey.TakeSecretKey("FacebookAppSecret", "76d5d06259054f339fba22c5876724f6");
+                FacebookOptions.AppId = AzureSecretKey.TakeSecretKey("FacebookAppID", "9e5eb1a22f324d83914e40c8a6907b60");
+                FacebookOptions.AppSecret = AzureSecretKey.TakeSecretKey("FacebookAppSecret", "76d5d06259054f339fba22c5876724f6");
             });
-          //  services.AddAuthentication().AddTwitter(twitterOptions =>
-          //  {
-          //        twitterOptions.ConsumerKey = "";
-          //        twitterOptions.ConsumerSecret = "";
-           //       twitterOptions.RetrieveUserDetails = true;
-           // });
+            services.AddAuthentication().AddGoogle(GoogleOptions =>
+            {
+                GoogleOptions.ClientId = AzureSecretKey.TakeSecretKey("GoogleClientId", "e488c683b464452e989259e0c16ab36f");
+                GoogleOptions.ClientSecret = AzureSecretKey.TakeSecretKey("GoogleClientSecret", "bf57a5a63d1c40d28a386841e5ee7b90");
+            });
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -93,8 +83,6 @@ namespace MathSite
  
             app.UseAuthentication();
             app.UseAuthorization();
-
-
 
             app.UseEndpoints(endpoints =>
             {
