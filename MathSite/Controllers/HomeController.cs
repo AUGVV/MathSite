@@ -182,6 +182,12 @@ namespace MathSite.Controllers
             return View(editTaskModel);
         }
 
+        public IActionResult BannedPage()
+        {     
+                return View();         
+        }
+
+
         public IActionResult SearchPage(int? Tag, string SearchText)
         {      
             PagesSearch pagesSearch = new PagesSearch(DataBase);

@@ -94,7 +94,7 @@ namespace MathSite.Areas.Identity.Pages.Account
                     _logger.LogInformation("User logged in.");
                     if (CurrentUser.isBaned)
                     {
-                        _ = _signInManager.SignOutAsync();
+                        //_signInManager.SignOutAsync();
                         return Redirect("/Home/BannedPage");
                     }
                     string region = CurrentUser.Region;

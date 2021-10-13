@@ -91,8 +91,8 @@ namespace MathSite.Areas.Identity.Pages.Account
             // Sign in the user with this external login provider if the user already has a login.
             var result = await _signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, isPersistent: false, bypassTwoFactor : true);
             if (result.Succeeded)
-            {
-                UserConfigModel CurrentUser = DataBase.UserConfig.Where(x => x.User == info.Principal.Identity.Name).FirstOrDefault();
+            {         
+                UserConfigModel CurrentUser = DataBase.UserConfig.Where(x => x.User == info.Principal.FindFirstValue(ClaimTypes.Email)).FirstOrDefault();
                 if (CurrentUser.isBaned)
                 {
                     _ = _signInManager.SignOutAsync();
