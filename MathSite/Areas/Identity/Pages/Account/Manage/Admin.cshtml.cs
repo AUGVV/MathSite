@@ -43,7 +43,6 @@ namespace MathSite.Areas.Identity.Pages.Account.Manage
 
         public IActionResult OnPost(string PageAct, int ChoisedId, string ChoisedUser, string SearchTheme, SortTasks Sort = SortTasks.TaskNameAsc)
         {
-            Debug.WriteLine("Post");
             if (PageAct == "DeleteTask")
             {
                 ViewData["SortSave"] = Sort;
@@ -63,7 +62,6 @@ namespace MathSite.Areas.Identity.Pages.Account.Manage
 
         public IActionResult OnGet(string ChoisedUser, string SearchTheme, SortTasks Sort = SortTasks.TaskNameAsc)
         {
-            Debug.WriteLine("Get");
             if (!DataBase.UserConfig.Where(x => x.User == SignInManager.Context.User.Identity.Name).FirstOrDefault().isAdmin)
             {
                return Redirect("/Home/Index");

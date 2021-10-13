@@ -17,20 +17,23 @@
         <input type="text" name="SearchText" placeholder="@Localizer["Search"]">
         <button type="submit"></button>
     </form>
-</div><br>
+</div>
+<br>
 <div class="text-center">
     <h1>@ViewData["CurrentTask"]</h1>
 </div>
 <div class="text-center">
     <b>@Localizer["TaskType"]</b>
     @ViewData["TaskType"]<br>
-</div><br>
+</div>
+<br>
 <div class="text-center">
     @foreach (var item in Model.Tags)
     {
         <span class="static-tag">#@item.TagName</span>
     }
-</div><br>
+</div>
+<br>
 @if ((int)ViewData["PicturesCount"]! > 0)
 {
     <div class="slideshow-container">
@@ -54,7 +57,8 @@
             <span class="dot" onclick="currentSlide(@count)"></span>
             count = count + 1;
         }
-    </div><br>
+    </div>
+    <br>
 }
 <div class="text-center">
     <b>@Localizer["Condition"]</b><br>
@@ -75,19 +79,21 @@
     </div>
     @if ((bool)ViewData["IsVoted"] == false)
     {
-        <div class="rating-area" id="raitings-active">
-            <input type="radio" id="star-5" name="rating" value="5" onclick="Rating(5)">
-            <label for="star-5"></label>
-            <input type="radio" id="star-4" name="rating" value="4" onclick="Rating(4)">
-            <label for="star-4"></label>
-            <input type="radio" id="star-3" name="rating" value="3" onclick="Rating(3)">
-            <label for="star-3"></label>
-            <input type="radio" id="star-2" name="rating" value="2" onclick="Rating(2)">
-            <label for="star-2"></label>
-            <input type="radio" id="star-1" name="rating" value="1" onclick="Rating(1)">
-            <label for="star-1"></label>
-        </div>
+<div class="rating-area" id="raitings-active">
+    <input type="radio" id="star-5" name="rating" value="5" onclick="Rating(5)">
+    <label for="star-5"></label>
+    <input type="radio" id="star-4" name="rating" value="4" onclick="Rating(4)">
+    <label for="star-4"></label>
+    <input type="radio" id="star-3" name="rating" value="3" onclick="Rating(3)">
+    <label for="star-3"></label>
+    <input type="radio" id="star-2" name="rating" value="2" onclick="Rating(2)">
+    <label for="star-2"></label>
+    <input type="radio" id="star-1" name="rating" value="1" onclick="Rating(1)">
+    <label for="star-1"></label>
+</div>
+
         <div class="rating-result" id="raitings-new" hidden></div>
+      
     }
     else if ((bool)ViewData["IsVoted"] == true)
     {
@@ -99,7 +105,7 @@
             @for (int i = 0; i < (int)ViewData["Rating"]; i++)
             {
                 <span class="active"> </span>
-            }
+            }   
         </div>
     }
     <template id="CommentTemplate">
@@ -108,10 +114,10 @@
             <span id="text"></span>
             <br>
             <div class="likes-bar" id="likes-body">
-                <button id="like" class="like">@Localizer["Like"]</button>
-                <span class="like like-temp" id="like-temp">0</span>
-                <button id="dislike" class="dislike">@Localizer["Dislike"]</button>
-                <span class="dislike dislike-temp" id="dislike-temp">0</span>
+                <button id="like" class="like"></button>
+                <span class="like-temp" id="like-temp">0</span>
+                <button id="dislike" class="dislike"></button>
+                <span class="dislike-temp" id="dislike-temp">0</span>
             </div>
         </div>
     </template>
@@ -134,10 +140,10 @@
                 </span>
                 <br>
                 <div class="likes-bar">
-                    <button class="like" onclick="DisLike('like', @item.Id)">@Localizer["Like"]</button>
-                    <span class="like" id="like-@item.Id" value="@item.Id">@item.Like</span>
-                    <button class="dislike" onclick="DisLike('dislike', @item.Id)">@Localizer["Dislike"]</button>
-                    <span class="dislike" id="dislike-@item.Id" value="@item.Id">@item.Dislike </span>
+                    <button class="like" onclick="DisLike('like', @item.Id)"></button>
+                    <span  id="like-@item.Id" value="@item.Id">@item.Like</span>
+                    <button class="dislike" onclick="DisLike('dislike', @item.Id)"></button>
+                    <span  id="dislike-@item.Id" value="@item.Id">@item.Dislike </span>
                 </div>
             </div>
         }

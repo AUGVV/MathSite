@@ -117,37 +117,19 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Admin" xml:space="preserve">
-    <value>Admin</value>
+  <data name="Statistic" xml:space="preserve">
+    <value>Your achievements:</value>
   </data>
-  <data name="Email" xml:space="preserve">
-    <value>Email</value>
+  <data name="TasksCreated" xml:space="preserve">
+    <value>Created tasks:</value>
   </data>
-  <data name="ExternalLogins" xml:space="preserve">
-    <value>External logins</value>
+  <data name="TasksRaiting" xml:space="preserve">
+    <value>Average rating of your tasks:</value>
   </data>
-  <data name="Language" xml:space="preserve">
-    <value>Language</value>
+  <data name="TasksSolved" xml:space="preserve">
+    <value>Solved tasks:</value>
   </data>
-  <data name="Password" xml:space="preserve">
-    <value>Password</value>
-  </data>
-  <data name="PersonalData" xml:space="preserve">
-    <value>Personal data</value>
-  </data>
-  <data name="Profile" xml:space="preserve">
-    <value>Profile</value>
-  </data>
-  <data name="SolvedTasks" xml:space="preserve">
-    <value>Solved tasks</value>
-  </data>
-  <data name="Theme" xml:space="preserve">
-    <value>Theme</value>
-  </data>
-  <data name="TwoFactor" xml:space="preserve">
-    <value>Two-factor authentication</value>
-  </data>
-  <data name="YouTasks" xml:space="preserve">
-    <value>You tasks</value>
+  <data name="TasksVoted" xml:space="preserve">
+    <value>Tasks rated:</value>
   </data>
 </root>

@@ -15,13 +15,29 @@
 }
 
 .like {
-    font-size: 16px;
-    color: #288800;
-    margin-left: 10px
+    background: url(https://i.ibb.co/2chkxxV/Like.png) 50% 50% no-repeat;
+    background-size: contain;
+    border: none;
+    width: 25px;
+    height: 25px;
 }
 
+    .like:hover {
+        width: 30px;
+        height: 30px;
+    }
+
+
+
 .dislike {
-    font-size: 16px;
-    color: #a70000;
-    margin-left: 10px
+    background: url(https://i.ibb.co/s164xTJ/dislike.png) 50% 50% no-repeat;
+    background-size: contain;
+    border: none;
+    width: 25px;
+    height: 25px;
 }
+
+    .dislike:hover {
+        width: 30px;
+        height: 30px;
+    }

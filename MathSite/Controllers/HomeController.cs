@@ -187,7 +187,6 @@ namespace MathSite.Controllers
                 return View();         
         }
 
-
         public IActionResult SearchPage(int? Tag, string SearchText)
         {      
             PagesSearch pagesSearch = new PagesSearch(DataBase);
@@ -203,12 +202,12 @@ namespace MathSite.Controllers
             }
         }
 
-        string StringToHex(string Word)
+        private string StringToHex(string Word)
         {
             return Uri.EscapeDataString(Word);
         }
 
-        string HexToString(string Word)
+        private string HexToString(string Word)
         {
             if (Word != null)
             {

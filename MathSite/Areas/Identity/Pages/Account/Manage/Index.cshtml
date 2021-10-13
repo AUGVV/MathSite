@@ -17,11 +17,11 @@
                 <label asp-for="Username"></label>
                 <input asp-for="Username" class="form-control" disabled />
             </div>
-            <div>Ваши достижения:</div><br>
-            Решено задач: @ViewData["AnsweredCount"]<br>
-            Создано задач: @ViewData["CreatedTasks"]<br>
-            Задач оценено: @ViewData["VotedCount"]<br>
-            Средний рейтинг ваших задач: @ViewData["ResultRaiting"]<br>
+            <div>@Localizer["Statistic"]</div><br>
+            @Localizer["TasksSolved"] @ViewData["AnsweredCount"]<br>
+            @Localizer["TasksCreated"] @ViewData["CreatedTasks"]<br>
+            @Localizer["TasksVoted"] @ViewData["VotedCount"]<br>
+            @Localizer["TasksRaiting"] @ViewData["ResultRaiting"]<br>
         </form>
     </div>
 </div>
