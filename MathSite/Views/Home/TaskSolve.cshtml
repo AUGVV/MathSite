@@ -64,7 +64,7 @@
     <b>@Localizer["Condition"]</b><br>
     @ViewData["CurrentCondition"]<br><br>
 </div>
-@if ((bool)ViewData["IsAutorize"] == true)
+@if ((bool)ViewData["isAutorize"] == true)
 {
     <div class="text-center">
         <b>@Localizer["TypeAnswer"]</b><br>
@@ -77,25 +77,24 @@
         </div>
         <button id="toanswer" type="submit" class="btn btn-primary">@Localizer["ToAnswer"]</button><br><br>
     </div>
-    @if ((bool)ViewData["IsVoted"] == false)
+    @if ((bool)ViewData["isVoted"] == false)
     {
-<div class="rating-area" id="raitings-active">
-    <input type="radio" id="star-5" name="rating" value="5" onclick="Rating(5)">
-    <label for="star-5"></label>
-    <input type="radio" id="star-4" name="rating" value="4" onclick="Rating(4)">
-    <label for="star-4"></label>
-    <input type="radio" id="star-3" name="rating" value="3" onclick="Rating(3)">
-    <label for="star-3"></label>
-    <input type="radio" id="star-2" name="rating" value="2" onclick="Rating(2)">
-    <label for="star-2"></label>
-    <input type="radio" id="star-1" name="rating" value="1" onclick="Rating(1)">
-    <label for="star-1"></label>
-</div>
 
+        <div class="rating-area" id="raitings-active">
+            <input type="radio" id="star-5" name="rating" value="5" onclick="Rating(5)">
+            <label for="star-5"></label>
+            <input type="radio" id="star-4" name="rating" value="4" onclick="Rating(4)">
+            <label for="star-4"></label>
+            <input type="radio" id="star-3" name="rating" value="3" onclick="Rating(3)">
+            <label for="star-3"></label>
+            <input type="radio" id="star-2" name="rating" value="2" onclick="Rating(2)">
+            <label for="star-2"></label>
+            <input type="radio" id="star-1" name="rating" value="1" onclick="Rating(1)">
+            <label for="star-1"></label>
+        </div>
         <div class="rating-result" id="raitings-new" hidden></div>
-      
     }
-    else if ((bool)ViewData["IsVoted"] == true)
+    else if ((bool)ViewData["isVoted"] == true)
     {
         <div class="rating-result" id="raitings-show">
             @for (int i = 0; i < 5 - (int)ViewData["Rating"]; i++)
@@ -105,7 +104,7 @@
             @for (int i = 0; i < (int)ViewData["Rating"]; i++)
             {
                 <span class="active"> </span>
-            }   
+            }
         </div>
     }
     <template id="CommentTemplate">
@@ -121,6 +120,8 @@
             </div>
         </div>
     </template>
+    <div class="rating-current" id="raiting-current">@ViewData["Rating"]/5</div>
+    <br>
     <b>@Localizer["Comment"]</b>
     <br>
     <textarea wrap="hard" placeholder="as you say" cols="120" rows="5" style="resize:none;" id="comment"></textarea>
@@ -141,9 +142,9 @@
                 <br>
                 <div class="likes-bar">
                     <button class="like" onclick="DisLike('like', @item.Id)"></button>
-                    <span  id="like-@item.Id" value="@item.Id">@item.Like</span>
+                    <span id="like-@item.Id" value="@item.Id">@item.Like</span>
                     <button class="dislike" onclick="DisLike('dislike', @item.Id)"></button>
-                    <span  id="dislike-@item.Id" value="@item.Id">@item.Dislike </span>
+                    <span id="dislike-@item.Id" value="@item.Id">@item.Dislike </span>
                 </div>
             </div>
         }
@@ -233,6 +234,7 @@
             span.classList.add("active");
             document.getElementById('raitings-new').appendChild(span);
         }
+        document.getElementById("raiting-current").innerHTML = num +'/5';
         document.getElementById("raitings-active").hidden = true;
         document.getElementById("raitings-new").hidden = false;
     });

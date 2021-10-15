@@ -1,9 +1,13 @@
 ﻿.rating-area {
-    overflow: hidden;
+    float: left;
     width: 265px;
     margin: 0px -45px;
+    margin-right: 5px;
 }
 
+.rating-current {
+    padding-top: 9px;
+}
     .rating-area:not(:checked) > input {
         display: none;
     }
@@ -47,9 +51,10 @@
 }
 
 .rating-result {
-    overflow: hidden;
+    float: left;
     width: 265px;
     margin: 0px -45px;
+    margin-right: 5px;
 }
 
     .rating-result span {

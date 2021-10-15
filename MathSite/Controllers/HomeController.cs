@@ -113,9 +113,9 @@ namespace MathSite.Controllers
             {
                 isAutorize = true;
             }
-            ViewData["IsAutorize"] = isAutorize;
-            ViewData["IsVoted"] = false;
-            ViewData["Rating"] = 0;
+            ViewData["isAutorize"] = isAutorize;
+            ViewData["isVoted"] = false;
+            ViewData["Rating"] = CurrentTask.Rating;
 
             if ((isAutorize != false) && (DataBase.UserTaskState.Where(x => x.UserName == SingInAuthor && x.TaskId == CurrentId).FirstOrDefault() == null))
             {
@@ -127,8 +127,7 @@ namespace MathSite.Controllers
 
             if ((isAutorize != false) && (DataBase.UserTaskState.Where(x => x.UserName == SingInAuthor && x.TaskId == CurrentId).FirstOrDefault().isVoted == true))
             {
-                ViewData["IsVoted"] = true;
-                ViewData["Rating"] = CurrentTask.Rating;
+                ViewData["isVoted"] = true;
             }
 
             ViewData["TaskType"] = CurrentTask.Type;
@@ -152,7 +151,7 @@ namespace MathSite.Controllers
             };
             return View(TaskSolveModel);
         }
-
+        
         [Authorize]
         public IActionResult EditTaskPage(int? CurrentId)
         {
