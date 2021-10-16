@@ -1,23 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Localization;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
+﻿using System.Linq;
 using MathSite.Models;
 
 namespace MathSite.Functions
 {
     public class LanguageChange
     {
-        public void ChangeLanguage(string Lang, string User, TasksContext DataBase)
+        private TasksContext DataBase;
+
+        public LanguageChange(TasksContext context)
         {
-            UserConfigModel CurrentUser = DataBase.UserConfig.Where(x => x.User == User).FirstOrDefault();
+            DataBase = context;
+        }
+
+        public void ChangeLanguage(string Lang, string User)
+        {
+            UserConfigModel CurrentUser = GetUserConfig(User);
             CurrentUser.Region = Lang;
             DataBase.SaveChanges();
+        }
+
+        private UserConfigModel GetUserConfig(string User)
+        {
+            return DataBase.UserConfig.Where(x => x.User == User).FirstOrDefault();
         }
     }
 }

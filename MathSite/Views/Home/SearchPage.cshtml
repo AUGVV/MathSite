@@ -12,6 +12,7 @@
         <button type="submit"></button>
     </form>
 </div><br><br>
+@if(Model != null)
 @foreach (var item in Model)
 {
     if (item.isDeleted == false)

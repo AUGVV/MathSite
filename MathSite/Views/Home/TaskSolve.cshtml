@@ -1,7 +1,7 @@
 ﻿@using Microsoft.AspNetCore.Mvc.Localization
 @inject IViewLocalizer Localizer
 @{
-    int count = 1;
+    int PicturesCount = 1;
 }
 <link rel="stylesheet" type="text/css" href="/css/Pictures.css">
 <link rel="stylesheet" type="text/css" href="/css/Raiting.css">
@@ -40,13 +40,13 @@
         @foreach (var item in Model.Urls)
         {
             <div class="mySlides">
-                <div class="numbertext">@count / @ViewData["PicturesCount"]</div>
+                <div class="numbertext">@PicturesCount / @ViewData["PicturesCount"]</div>
                 <img src=@item style="width:100%">
             </div>
-            count = count + 1;
+            PicturesCount = PicturesCount + 1;
         }
         @{
-            count = 1;
+            PicturesCount = 1;
         }
         <a class="prev" onclick="plusSlides(-1)">&#10094;</a>
         <a class="next" onclick="plusSlides(1)">&#10095;</a>
@@ -54,8 +54,8 @@
     <div style="text-align:center">
         @foreach (var item in Model.Urls)
         {
-            <span class="dot" onclick="currentSlide(@count)"></span>
-            count = count + 1;
+            <span class="dot" onclick="currentSlide(@PicturesCount)"></span>
+            PicturesCount = PicturesCount + 1;
         }
     </div>
     <br>
@@ -68,7 +68,7 @@
 {
     <div class="text-center">
         <b>@Localizer["TypeAnswer"]</b><br>
-        <input type="text" name="Answer" id="currentanswer" class="input-bars"><br><br>
+        <input type="text" name="Answer" id="current-answer" class="input-bars"><br><br>
         <div hidden id="answer-not-correct">
             <b class="alert alert-danger">@Localizer["BadAnswer"]</b><br><br>
         </div>
@@ -163,7 +163,7 @@
     showSlides(slideIndex);
 
     document.getElementById("toanswer").addEventListener("click", function (e) {
-        var Answer = document.getElementById("currentanswer").value;
+        var Answer = document.getElementById("current-answer").value;
         if (Answer == "") { alert('Введите ваш ответ') }
         else {
             hubConnection.invoke('QuestionAnswer', CurrentId, Answer, UserName).catch(function (err) {

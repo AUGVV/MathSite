@@ -55,14 +55,19 @@ namespace MathSite.Areas.Identity.Pages.Account.Manage
             return Page();
         }
 
-        void DeleteTask(int ChoisedId)
-        {  
-            TasksModel Task = DataBase.Tasks.Where(x => x.Id == ChoisedId).FirstOrDefault();
+        private void DeleteTask(int ChoisedId)
+        {
+            TasksModel Task = GetCurrentTask(ChoisedId);
             Task.isDeleted = true;
             DataBase.SaveChanges();
         }
 
-        SelectList CreateMathList()
+        private TasksModel GetCurrentTask(int ChoisedId)
+        {
+            return DataBase.Tasks.Where(x => x.Id == ChoisedId).FirstOrDefault();
+        }
+
+        private SelectList CreateMathList()
         {
             List<ThemesModel> MathTheme = new List<ThemesModel>();
             MathTheme.Add(new ThemesModel() { Theme = "Все"});

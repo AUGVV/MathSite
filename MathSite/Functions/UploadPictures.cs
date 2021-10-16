@@ -1,20 +1,8 @@
-﻿using MathSite.Functions;
-using MathSite.Models;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
+﻿using MathSite.Models;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Diagnostics;
-using System.Linq;
 using System.Net;
 using System.Text;
-using System.Threading.Tasks;
 namespace MathSite.Functions
 {
     public class UploadPictures

@@ -62,12 +62,17 @@ namespace MathSite.Areas.Identity.Pages.Account.Manage
 
         public IActionResult OnGet(string ChoisedUser, string SearchTheme, SortTasks Sort = SortTasks.TaskNameAsc)
         {
-            if (!DataBase.UserConfig.Where(x => x.User == SignInManager.Context.User.Identity.Name).FirstOrDefault().isAdmin)
+            if (!isAdmin())
             {
                return Redirect("/Home/Index");
             }
             PrepareView(ChoisedUser, SearchTheme, Sort);
             return Page();
+        }
+
+        private bool isAdmin()
+        {
+            return DataBase.UserConfig.Where(x => x.User == SignInManager.Context.User.Identity.Name).FirstOrDefault().isAdmin;
         }
 
         private void PrepareView(string ChoisedUser, string SearchTheme, SortTasks Sort = SortTasks.TaskNameAsc, string PageAct = "")
@@ -92,7 +97,7 @@ namespace MathSite.Areas.Identity.Pages.Account.Manage
 
         private bool BanCheck(string ChoisedUser, string PageAct)
         {
-            UserConfigModel CurrentUserConfig = DataBase.UserConfig.Where(x => x.User == ChoisedUser).FirstOrDefault();
+            UserConfigModel CurrentUserConfig = GetCurrentUserConfig(ChoisedUser);
             ViewData["DoNotBanYorself"] = false;
             if (PageAct == "BanUser")
             {
@@ -103,6 +108,11 @@ namespace MathSite.Areas.Identity.Pages.Account.Manage
                 UnbanUser(ChoisedUser, CurrentUserConfig);
             }
             return CurrentUserConfig.isBaned;
+        }
+
+        private UserConfigModel GetCurrentUserConfig(string ChoisedUser)
+        {
+            return DataBase.UserConfig.Where(x => x.User == ChoisedUser).FirstOrDefault();
         }
 
         private void BanUser(string ChoisedUser, UserConfigModel CurrentUserConfig)
@@ -165,17 +175,33 @@ namespace MathSite.Areas.Identity.Pages.Account.Manage
 
         private void DeleteTask(int ChoisedId)
         {
-            TasksModel Task = DataBase.Tasks.Where(x => x.Id == ChoisedId).FirstOrDefault();
+            TasksModel Task = GetTask(ChoisedId);
             Task.isDeleted = true;
             DataBase.SaveChanges();
         }
 
+        private TasksModel GetTask(int ChoisedId)
+        {
+            return DataBase.Tasks.Where(x => x.Id == ChoisedId).FirstOrDefault();
+        }
+
         private void GetAllUserInfo(string ChoisedUser)
         {
-            UserTasks = DataBase.Tasks.Where(x => x.Author == ChoisedUser).ToList();
-            UserTaskState = DataBase.UserTaskState.Where(x => x.UserName == ChoisedUser).ToList();
+            UserTasks = GetUserTasksList(ChoisedUser);
+            UserTaskState = GetUserStateList(ChoisedUser);
             SetUserInfo();
         }
+
+        private List<TasksModel> GetUserTasksList(string ChoisedUser)
+        {
+            return DataBase.Tasks.Where(x => x.Author == ChoisedUser).ToList();
+        }
+
+        private List<UserTaskModel> GetUserStateList(string ChoisedUser)
+        {
+            return DataBase.UserTaskState.Where(x => x.UserName == ChoisedUser).ToList();
+        }
+
 
         private void SetUserInfo()
         {

@@ -1,15 +1,11 @@
 ﻿using MathSite.Models;
-using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Azure.Search.Documents;
 using Azure.Search.Documents.Indexes;
 using Azure;
-using System.Diagnostics;
 using MathSite.Models.Azure;
-using Newtonsoft.Json;
 using Azure.Search.Documents.Models;
 
 namespace MathSite.Functions
@@ -25,27 +21,56 @@ namespace MathSite.Functions
         public PagesSearch(TasksContext DataBase)
         {
             AzureSecretKey = new AzureSecretKey();
-            this.DataBase = DataBase;    
+            this.DataBase = DataBase;
         }
-  
+
         public IQueryable<TasksModel> GetResult(int? Tag, string SearchText)
         {
-            IQueryable<TasksModel> Results = null;
+            return CheckAllResults(Tag, SearchText);
+        }
 
+        private IQueryable<TasksModel> CheckAllResults(int? Tag, string SearchText)
+        {
+            IQueryable<TasksModel> TagsResult = TagSearch(Tag);
+            IQueryable<TasksModel> TextResult = TextSearch(SearchText);
+          
+            if(TextResult != null)
+            {
+                return TextResult;
+            }
+            else if(TagsResult != null)
+            {
+                return TagsResult;
+            }
+            return null;
+        }
+
+        private IQueryable<TasksModel> TagSearch(int? Tag)
+        {
             if (Tag != null)
             {
-                SearchViewData = DataBase.Tags.Where(x => x.Id == Tag).FirstOrDefault().TagName;
-                Results = DataBase.TaskTag.Where(x => x.Tag == Tag).Join(DataBase.Tasks, f => f.TaskId, t => t.Id, (f, t) => new TasksModel() { Id = t.Id, TaskName = t.TaskName, Type = t.Type });
+                SearchViewData = GetTagName(Tag);
+                return DataBase.TaskTag.Where(x => x.Tag == Tag).Join(DataBase.Tasks, f => f.TaskId, t => t.Id, (f, t) => new TasksModel() { Id = t.Id, TaskName = t.TaskName, Type = t.Type });
             }
+            return null;
+        }
+
+        private string GetTagName(int? Tag)
+        {
+            return DataBase.Tags.Where(x => x.Id == Tag).FirstOrDefault().TagName;
+        }
+
+        private IQueryable<TasksModel> TextSearch(string SearchText)
+        {
             if (SearchText != null)
             {
                 SearchViewData = SearchText;
-                Results = SearchInText(SearchText);
+                return SearchInText(SearchText);
             }
-            return Results;
+            return null;
         }
 
-        IQueryable<TasksModel> SearchInText(string SearchText)
+        private IQueryable<TasksModel> SearchInText(string SearchText)
         {
             IEnumerable<TasksModel> TasksResult = AzureSearchTasks(SearchText);
             IEnumerable<TasksModel> CommentsResult = AzureSearchComments(SearchText);
@@ -54,12 +79,15 @@ namespace MathSite.Functions
 
         private List<TasksModel> AzureSearchComments(string SearchText)
         {
-            List<TasksModel> FindedComments = new List<TasksModel>();
             var Options = new SearchOptions(){ IncludeTotalCount = true };
             string IndexName = "azuresql-commentsindex";
-            SearchResults<ResultIndexModel> Result = GetAzureIndex(SearchText, Options, IndexName);
+            return FindedComments(GetAzureIndex(SearchText, Options, IndexName));
+        }
 
-            foreach (var Item in Result.GetResults().ToList().Distinct())
+        private List<TasksModel> FindedComments(SearchResults<ResultIndexModel> SearchResult)
+        {
+            List<TasksModel> FindedComments = new List<TasksModel>();
+            foreach (var Item in SearchResult.GetResults().ToList().Distinct())
             {
                 FindedComments.Add(FindTaskViaComment(Item.Document.TaskId));
             }
@@ -68,20 +96,23 @@ namespace MathSite.Functions
 
         TasksModel FindTaskViaComment(int TaskId)
         {
-            TasksModel Task = DataBase.Tasks.Where(x => x.Id == TaskId).FirstOrDefault();
-            return Task;
+            return DataBase.Tasks.Where(x => x.Id == TaskId).FirstOrDefault();
         }
 
         private List<TasksModel> AzureSearchTasks(string SearchText)
         {
-            List<TasksModel> FindedTasks = new List<TasksModel>();
             string IndexName = "azuresql-index";
             var Options = new SearchOptions()
             {
                 IncludeTotalCount = true
             };
-            SearchResults<ResultIndexModel> Result = GetAzureIndex(SearchText, Options, IndexName);
-            foreach (var Item in Result.GetResults().ToList())
+            return FindedTasks(GetAzureIndex(SearchText, Options, IndexName));
+        }
+
+        private List<TasksModel> FindedTasks(SearchResults<ResultIndexModel> SearchResult)
+        {
+            List<TasksModel> FindedTasks = new List<TasksModel>();
+            foreach (var Item in SearchResult.GetResults().ToList())
             {
                 FindedTasks.Add(new TasksModel() { Id = Convert.ToInt32(Item.Document.Id), TaskName = Item.Document.TaskName, Condition = Item.Document.Condition, Type = Item.Document.Type, isDeleted = Item.Document.isDeleted });
             }
@@ -104,10 +135,5 @@ namespace MathSite.Functions
         {
             return AzureSecretKey.TakeSecretKey("KeyIndexSearch", "2b35df665e4c4e3993414f21b889ea3e");
         }
-
-
-
-
-
     }
 }

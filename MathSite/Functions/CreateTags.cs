@@ -1,9 +1,5 @@
 ﻿using MathSite.Models;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace MathSite.Functions
 {
@@ -23,7 +19,7 @@ namespace MathSite.Functions
 
             foreach (string Tag in SplitTags)
             {
-                if (DataBase.Tags.Where(x => x.TagName == Tag).FirstOrDefault() == null)
+                if (GetTags(Tag) == null)
                 {
                     SaveTag(Tag);
                 }
@@ -31,18 +27,23 @@ namespace MathSite.Functions
             }
         }
 
-        void SaveTag(string Tag)
+        private void SaveTag(string Tag)
         {
             DataBase.Tags.Add(new TagsModel() { TagName = Tag });
             DataBase.SaveChanges();
         }
 
-        void TagAddToTask(string Tag, int TaskId)
+        private void TagAddToTask(string Tag, int TaskId)
         {
-            TagsModel CurrentTag = DataBase.Tags.Where(x => x.TagName == Tag).FirstOrDefault();
+            TagsModel CurrentTag = GetTags(Tag);
             CurrentTag.Count += 1;
             DataBase.TaskTag.Add(new TaskTagModel() { Tag = CurrentTag.Id, TaskId = TaskId });
             DataBase.SaveChanges();
+        }
+
+        private TagsModel GetTags(string Tag)
+        {
+            return DataBase.Tags.Where(x => x.TagName == Tag).FirstOrDefault();
         }
     }
 }

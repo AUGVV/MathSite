@@ -1,8 +1,6 @@
 ﻿using MathSite.Models;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace MathSite.Functions
 {
@@ -18,33 +16,39 @@ namespace MathSite.Functions
         public void TaskSave(string Author, string TaskName, string TaskCondition, string FirstAnswer, string SecondAnswer, string ThirdAnswer, string Tags, string images, string type)
         {
             List<string> ListOfAnswers = new List<string>() { FirstAnswer, SecondAnswer, ThirdAnswer };
+
+            int CurrentId = AddNewTask(Author, TaskName, TaskCondition, type);
+
+            CreateAnswers(ListOfAnswers, CurrentId);
+            CrateTaskTags(CurrentId, Tags);
+            AddPictures(CurrentId, images);
+        }
+
+        private int AddNewTask(string Author, string TaskName, string TaskCondition, string type)
+        {
             TasksModel CreateModel = new TasksModel() { TaskName = TaskName, Author = Author, Condition = TaskCondition, AddDate = DateTime.Now, isDeleted = false, Rating = 0, Type = type };
             DataBase.Tasks.Add(CreateModel);
             DataBase.SaveChanges();
-            int CurrentId = CreateModel.Id;
-            CreateAnswers(ListOfAnswers, CurrentId);
-            if (Tags != null)
-            {
-                CrateTaskTags(CurrentId, Tags);
-            }
+            return CreateModel.Id;
+        }
+
+        private void AddPictures(int CurrentId, string images)
+        {
             if (images != null)
             {
-                AddPictures(CurrentId, images);
+                UploadPictures UploadPictures = new UploadPictures(DataBase);
+                UploadPictures.Upload(CurrentId, images);
             }
         }
 
-        void AddPictures(int CurrentId, string images)
+        private void CrateTaskTags(int CurrentId, string Tags)
         {
-            UploadPictures UploadPictures = new UploadPictures(DataBase);
-            UploadPictures.Upload(CurrentId, images);
+            if (Tags != null)
+            {
+                CreateTags CreateTags = new CreateTags(DataBase);
+                CreateTags.Create(Tags, CurrentId);
+            }
         }
-
-        void CrateTaskTags(int CurrentId, string Tags)
-        {
-            CreateTags CreateTags = new CreateTags(DataBase);
-            CreateTags.Create(Tags, CurrentId);
-        }
-
         private void CreateAnswers(List<string> ListOfAnswers, int CurrentId)
         {
             foreach (string Answer in ListOfAnswers)
@@ -57,6 +61,5 @@ namespace MathSite.Functions
                 }
             }
         }
-
     }
 }

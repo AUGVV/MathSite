@@ -42,9 +42,7 @@ namespace MathSite.Areas.Identity.Pages.Account.Manage
         {
             var userName = await _userManager.GetUserNameAsync(user);
             var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
-            IEnumerable<UserTaskModel> UserTaskState = DataBase.UserTaskState.Where(x => x.UserName == userName);
-            IEnumerable<TasksModel> UserTasks = DataBase.Tasks.Where(x => x.Author == userName);
-            GetUserInfo(UserTaskState, UserTasks);
+            GetUserInfo(GetUserTaskState(userName), GetTask(userName));
 
             Username = userName;
 
@@ -53,6 +51,17 @@ namespace MathSite.Areas.Identity.Pages.Account.Manage
                 PhoneNumber = phoneNumber
             };
         }
+
+        private IEnumerable<UserTaskModel> GetUserTaskState(string UserName)
+        {
+             return DataBase.UserTaskState.Where(x => x.UserName == UserName);
+        }
+
+        private IEnumerable<TasksModel> GetTask(string UserName)
+        {
+            return DataBase.Tasks.Where(x => x.Author == UserName);
+        }
+
 
         private void GetUserInfo(IEnumerable<UserTaskModel> UserTaskState, IEnumerable<TasksModel> UserTasks)
         {

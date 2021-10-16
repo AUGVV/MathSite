@@ -52,12 +52,20 @@ namespace MathSite.Areas.Identity.Pages.Account.Manage
             TypeDesc,
         }
 
-        void ViewListCreate(SortTasks Sort, string Search = "Все")
+        private void ViewListCreate(SortTasks Sort, string Search = "Все")
         {
-            Tasks = TableSort(DataBase.UserTaskState.Where(x => x.UserName == SignInManager.Context.User.Identity.Name).Join(DataBase.Tasks, f => f.TaskId, t => t.Id, (f, t) => new TasksModel() { Id = f.TaskId, TaskName = t.TaskName, Condition = t.Condition, Type = t.Type }).ToList(), Sort, Search);
+            Tasks = GetUserTasks(Sort, Search);
         }
 
-        SelectList CreateMathList()
+        private List<TasksModel> GetUserTasks(SortTasks Sort, string Search)
+        {
+            return TableSort(DataBase.UserTaskState
+                .Where(x => x.UserName == SignInManager.Context.User.Identity.Name)
+                .Join(DataBase.Tasks, f => f.TaskId, t => t.Id, (f, t) => new TasksModel() { Id = f.TaskId, TaskName = t.TaskName, Condition = t.Condition, Type = t.Type })
+                .ToList(), Sort, Search);
+        }
+
+        private SelectList CreateMathList()
         {
             List<ThemesModel> MathTheme = new List<ThemesModel>();
             MathTheme.Add(new ThemesModel() { Theme = "Все" });

@@ -35,8 +35,8 @@ namespace MathSite.Areas.Identity.Pages.Account.Manage
         void ChangeLanguage(string Language)
         {
             string SingInAuthor = SignInManager.Context.User.Identity.Name;
-            LanguageChange LanguageChange = new LanguageChange();
-            LanguageChange.ChangeLanguage(Language, SingInAuthor, DataBase);
+            LanguageChange LanguageChange = new LanguageChange(DataBase);
+            LanguageChange.ChangeLanguage(Language, SingInAuthor);
         }
     }
 }
