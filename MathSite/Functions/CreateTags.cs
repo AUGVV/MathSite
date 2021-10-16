@@ -15,15 +15,17 @@ namespace MathSite.Functions
 
         public void Create(string TaskTags, int TaskId)
         {
-            string[] SplitTags = TaskTags.ToLower().Split('#');
-
-            foreach (string Tag in SplitTags)
+            if (TaskTags.Length > 0)
             {
-                if (GetTags(Tag) == null)
+                string[] SplitTags = TaskTags.ToLower().Split('#');
+                foreach (string Tag in SplitTags)
                 {
-                    SaveTag(Tag);
+                    if (GetTags(Tag) == null)
+                    {
+                        SaveTag(Tag);
+                    }
+                    TagAddToTask(Tag, TaskId);
                 }
-                TagAddToTask(Tag, TaskId);
             }
         }
 

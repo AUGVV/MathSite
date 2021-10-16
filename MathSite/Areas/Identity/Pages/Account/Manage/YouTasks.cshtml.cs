@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using MathSite.Functions;
 using MathSite.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -58,8 +59,16 @@ namespace MathSite.Areas.Identity.Pages.Account.Manage
         private void DeleteTask(int ChoisedId)
         {
             TasksModel Task = GetCurrentTask(ChoisedId);
+            DeleteTags(ChoisedId);
             Task.isDeleted = true;
             DataBase.SaveChanges();
+        }
+
+
+        private void DeleteTags(int ChoisedId)
+        {
+            DeleteTags DeleteTags = new DeleteTags(DataBase);
+            DeleteTags.Delete(ChoisedId);
         }
 
         private TasksModel GetCurrentTask(int ChoisedId)

@@ -29,31 +29,31 @@ namespace MathSite.Hubs
                 {
                     NewLikeCount = AddLike(Comment);
                 }
-                else if(DisOrLike == "dislike")
+                else if (DisOrLike == "dislike")
                 {
                     NewLikeCount = AddDislike(Comment);
-                }               
+                }
             }
             else
             {
                 DisOrLike = "";
-            }    
+            }
             await Clients.All.SendAsync($"CommentLiked", CommentId, NewLikeCount, DisOrLike);
         }
 
         public async Task NightMode(bool State)
         {
-           
+
             if (State == true)
             {
-             
+
 
             }
-            else if(State == false)
+            else if (State == false)
             {
 
 
-            }        
+            }
         }
 
         public async Task AddToComment(string TaskId, string WhatSay, string UserName)
@@ -93,10 +93,10 @@ namespace MathSite.Hubs
 
         public async Task ChangeTaskName(string TaskId, string NewName)
         {
-             TasksModel Task = GetTask(Convert.ToInt32(TaskId));
-             Task.TaskName = NewName;
-             DataBase.SaveChanges();
-             await Clients.Caller.SendAsync($"NameChanged", Task.TaskName);
+            TasksModel Task = GetTask(Convert.ToInt32(TaskId));
+            Task.TaskName = NewName;
+            DataBase.SaveChanges();
+            await Clients.Caller.SendAsync($"NameChanged", Task.TaskName);
         }
 
         public async Task ChangeTaskType(string TaskId, string NewType)
@@ -129,11 +129,7 @@ namespace MathSite.Hubs
         public async Task ChangeTaskTags(string TaskId, string NewTags)
         {
             int CurrentId = Convert.ToInt32(TaskId);
-            foreach (TaskTagModel Tag in GetTagsList(CurrentId))
-            {
-                DataBase.TaskTag.Remove(Tag);
-            }
-            DataBase.SaveChanges();
+            DeleteTags(CurrentId);
             CreateNewTags(CurrentId, NewTags);
             await Clients.Caller.SendAsync($"TagsChanged");
         }
@@ -149,6 +145,13 @@ namespace MathSite.Hubs
                 AddPictures(Convert.ToInt32(TaskId), NewPictures); 
             }
             await Clients.Caller.SendAsync($"PictureChanged");
+        }
+
+  
+        private void DeleteTags(int ChoisedId)
+        {
+            DeleteTags DeleteTags = new DeleteTags(DataBase);
+            DeleteTags.Delete(ChoisedId);
         }
 
         private UserTaskModel GetUserTaskState(int TaskId, string UserName)
@@ -223,11 +226,6 @@ namespace MathSite.Hubs
         private List<AnswersModel> GetAnswersList(int CurrentId)
         {
             return DataBase.Answers.Where(x => x.TaskId == CurrentId).ToList();
-        }
-
-        private List<TaskTagModel> GetTagsList(int CurrentId)
-        {
-            return DataBase.TaskTag.Where(x => x.TaskId == CurrentId).ToList();
         }
 
         private void CreateNewTags(int TaskId, string NewTags)
