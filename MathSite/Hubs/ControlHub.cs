@@ -10,12 +10,11 @@ namespace MathSite.Hubs
 {
     public class ControlHub : Hub
     {
-
         private TasksContext DataBase;
 
-        public ControlHub(TasksContext context)
+        public ControlHub(TasksContext Context)
         {
-            DataBase = context;
+            DataBase = Context;
         }
 
         public async Task DisLikeComment(int CommentId, string UserName, string DisOrLike)
@@ -39,20 +38,6 @@ namespace MathSite.Hubs
                 DisOrLike = "";
             }
             await Clients.All.SendAsync($"CommentLiked", CommentId, NewLikeCount, DisOrLike);
-        }
-
-        public async Task NightMode(bool State)
-        {
-            if (State == true)
-            {
-
-
-            }
-            else if (State == false)
-            {
-
-
-            }
         }
 
         public async Task AddToComment(string TaskId, string WhatSay, string UserName)

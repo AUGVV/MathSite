@@ -11,26 +11,28 @@
 
 
 
-
-<script src="/js/signalr/dist/browser/signalr.min.js"></script>
 <script>
-    const hubConnection = new signalR.HubConnectionBuilder().withUrl("/hubs").build();
+    window.onload = function () {
+        if (localStorage.getItem("NightMode") == "on") {
+            document.getElementById("button").classList.add("switch-on");
+        }
+        else if (localStorage.getItem("NightMode") == "off") {
+            document.getElementById("button").classList.remove("switch-on");
+        }
+    }
+
 
     document.getElementById("button").addEventListener("click", function (e) {
         if (document.getElementById("button").classList.contains('switch-on') == false) {
+            localStorage.setItem('NightMode', 'on');
             document.getElementById("button").classList.add("switch-on");
-            hubConnection.invoke('NightMode', true).catch(function (err) {
-                return console.error(err.toString());
-            });
+            location.reload();
         }
         else if (document.getElementById("button").classList.contains('switch-on') == true) {
-
             document.getElementById("button").classList.remove("switch-on");
-            hubConnection.invoke('NightMode', false).catch(function (err) {
-                return console.error(err.toString());
-            });
+            localStorage.setItem('NightMode', 'off');
+            location.reload();
         }
     });
-    hubConnection.start();
 </script>
 

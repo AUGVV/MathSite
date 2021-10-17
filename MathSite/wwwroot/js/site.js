@@ -3,4 +3,15 @@
 
 // Write your JavaScript code.
 
+document.addEventListener("DOMContentLoaded", ready);
+
+function ready(event) {
+    var NightState = localStorage.getItem("NightMode")
+    if (NightState == "on") {
+        document.getElementById("main-body").style = "filter: invert(100%); background: #000;";
+    }
+    else if (NightState == "off") {
+        document.getElementById("main-body").style = "";
+    }
+}
 

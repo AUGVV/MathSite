@@ -27,7 +27,6 @@ namespace MathSite
         public void ConfigureServices(IServiceCollection services)
         {
             AzureSecretKey AzureSecretKey = new AzureSecretKey();
-            
 
             services.AddLocalization(options => options.ResourcesPath = "Resources");
             services.AddSignalR(hubOptions =>

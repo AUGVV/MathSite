@@ -11,6 +11,7 @@ namespace MathSite.Areas.Identity.Pages.Account.Manage
     {
         public void OnGet()
         {
+
         }
     }
 }
