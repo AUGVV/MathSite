@@ -54,15 +54,20 @@ namespace MathSite.Areas.Identity.Pages.Account.Manage
 
         private void ViewListCreate(SortTasks Sort, string Search = "Все")
         {
-            Tasks = GetUserTasks(Sort, Search);
+            Tasks = GetSortedTasks(Sort, Search);
         }
 
-        private List<TasksModel> GetUserTasks(SortTasks Sort, string Search)
+        private List<TasksModel> GetSortedTasks(SortTasks Sort, string Search)
         {
-            return TableSort(DataBase.UserTaskState
-                .Where(x => x.UserName == SignInManager.Context.User.Identity.Name)
+            return TableSort(GetSolvedTasks(), Sort, Search);
+        }
+
+        private List<TasksModel> GetSolvedTasks()
+        {
+           return DataBase.UserTaskState
+                .Where(x => x.UserName == SignInManager.Context.User.Identity.Name && x.isAnswered == true)
                 .Join(DataBase.Tasks, f => f.TaskId, t => t.Id, (f, t) => new TasksModel() { Id = f.TaskId, TaskName = t.TaskName, Condition = t.Condition, Type = t.Type })
-                .ToList(), Sort, Search);
+                .ToList();
         }
 
         private SelectList CreateMathList()

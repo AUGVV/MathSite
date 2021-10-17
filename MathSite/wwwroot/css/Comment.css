@@ -9,6 +9,9 @@
     margin-bottom: 12px
 }
 
+.comment-text {
+    overflow-wrap: break-word;
+}
 
 .who {
     font-size: 15px;

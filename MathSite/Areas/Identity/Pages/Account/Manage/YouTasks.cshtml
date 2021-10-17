@@ -3,6 +3,7 @@
 @using Microsoft.AspNetCore.Mvc.Localization
 @inject IViewLocalizer Localizer
 
+<link rel="stylesheet" type="text/css" href="/css/ConditionStyle.css">
 <form id="Create" method="post">
     <button id="create-task" asp-route-PageAct="CreateTask" type="submit" class="btn btn-primary btn-create">@Localizer["CreateNew"]</button><br>
 </form>
@@ -20,7 +21,7 @@
             {
                 <tr>
                     <td>@item.TaskName</td>
-                    <td>@item.Condition</td>
+                    <td class="condition-list">@item.Condition</td>
                     <td>@item.Rating</td>
                     <td><Button type="submit" asp-route-PageAct="ShowTask" asp-route-ChoisedId=@item.Id class="btn btn-primary">@Localizer["View"]</Button></td>
                     <td><Button type="submit" asp-route-PageAct="EditTask" asp-route-ChoisedId=@item.Id class="btn btn-primary">@Localizer["Edit"]</Button></td>

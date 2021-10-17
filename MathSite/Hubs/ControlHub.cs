@@ -43,7 +43,6 @@ namespace MathSite.Hubs
 
         public async Task NightMode(bool State)
         {
-
             if (State == true)
             {
 

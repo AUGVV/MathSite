@@ -36,7 +36,7 @@
 <br>
 @if ((int)ViewData["PicturesCount"]! > 0)
 {
-    <div class="slideshow-container">
+    <div class="slideshow-container" style="display: block; width:50%">
         @foreach (var item in Model.Urls)
         {
             <div class="mySlides">
@@ -110,7 +110,7 @@
     <template id="CommentTemplate">
         <div class="comment">
             <div id="who" class="who"></div>
-            <span id="text"></span>
+            <span id="text" class="comment-text"></span>
             <br>
             <div class="likes-bar" id="likes-body">
                 <button id="like" class="like"></button>
@@ -136,7 +136,7 @@
                 <div class="who">
                     @item.Author
                 </div>
-                <span>
+                <span class="comment-text">
                     @item.Text
                 </span>
                 <br>

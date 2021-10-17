@@ -3,6 +3,7 @@
 @using Microsoft.AspNetCore.Mvc.Localization
 @inject IViewLocalizer Localizer
 
+<link rel="stylesheet" type="text/css" href="/css/ConditionStyle.css">
 <form method="get">
     <label class="control-label">Тема:</label>  <select name="Search" asp-items="Model.MathTheme"></select><button type="submit" class="btn btn-primary btn-filter">@Localizer["Найти"]</button>
 </form>
@@ -17,7 +18,7 @@
         {
             <tr>
                 <td>@item.TaskName</td>
-                <td>@item.Condition</td>
+                <td class="condition-list">@item.Condition</td>
                 <td>@item.Type</td>
                 <td><Button type="submit" asp-route-PageAct="ShowTask" asp-route-ChoisedId=@item.Id class="btn btn-primary">@Localizer["View"]</Button></td>
             </tr>
