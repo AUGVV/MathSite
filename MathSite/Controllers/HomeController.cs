@@ -218,9 +218,14 @@ namespace MathSite.Controllers
             {
                 Urls = GetPicturesUrls(CurrentId),
                 Tags = GetTags(CurrentId),
-                Comments = DataBase.Comments.Where(x => x.TaskId == CurrentId)
+                Comments = GetTaskComments(CurrentId)
             };
             return TaskSolveModel;
+        }
+
+        private IQueryable<CommentsModel> GetTaskComments(int? CurrentId)
+        {
+            return DataBase.Comments.Where(x => x.TaskId == CurrentId);
         }
 
         private bool isVoted(int? CurrentId, string SingInAuthor)
